@@ -7,7 +7,7 @@ export class AppError extends Error {
     errorCode: string,
     message: string,
     statusCode = 500,
-    details: any[] = [],
+    details: any[] = []
   ) {
     super(message);
     this.errorCode = errorCode;
@@ -19,43 +19,72 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(errorCode = "VALIDATION_ERROR", message = "Request validation failed", details: any[] = []) {
+  constructor(
+    message = "Request validation failed",
+    errorCode = "VALIDATION_ERROR",
+    details: any[] = []
+  ) {
     super(errorCode, message, 400, details);
   }
 }
 
 export class AuthenticationError extends AppError {
-  constructor(errorCode = "UNAUTHORIZED", message = "Authentication credentials invalid or missing", details: any[] = []) {
+  constructor(
+    message = "Authentication credentials invalid or missing",
+    errorCode = "UNAUTHORIZED",
+    details: any[] = []
+  ) {
     super(errorCode, message, 401, details);
   }
 }
 
 export class ForbiddenError extends AppError {
-  constructor(errorCode = "FORBIDDEN", message = "You do not have permission to access this resource", details: any[] = []) {
+  constructor(
+    message = "You do not have permission to access this resource",
+    errorCode = "FORBIDDEN",
+    details: any[] = []
+  ) {
     super(errorCode, message, 403, details);
   }
 }
 
 export class NotFoundError extends AppError {
-  constructor(errorCode = "NOT_FOUND", message = "Requested resource not found", details: any[] = []) {
+  constructor(
+    message = "Requested resource not found",
+    errorCode = "NOT_FOUND",
+    details: any[] = []
+  ) {
     super(errorCode, message, 404, details);
   }
 }
 
 export class ConflictError extends AppError {
-  constructor(errorCode = "CONFLICT", message = "Resource conflict occurred", details: any[] = []) {
+  constructor(
+    message = "Resource conflict occurred",
+    errorCode = "CONFLICT",
+    details: any[] = []
+  ) {
     super(errorCode, message, 409, details);
   }
 }
 
 export class RateLimitError extends AppError {
-  constructor(errorCode = "RATE_LIMIT_EXCEEDED", message = "Too many requests. Please try again later.", details: any[] = []) {
+  constructor(
+    message = "Too many requests. Please try again later.",
+    errorCode = "RATE_LIMIT_EXCEEDED",
+    details: any[] = []
+  ) {
     super(errorCode, message, 429, details);
   }
 }
 
 export class DatabaseError extends AppError {
-  constructor(errorCode = "DATABASE_ERROR", message = "A database operational error occurred", details: any[] = []) {
+  constructor(
+    message = "A database operational error occurred",
+    errorCode = "DATABASE_ERROR",
+    details: any[] = []
+  ) {
     super(errorCode, message, 500, details);
   }
 }
+

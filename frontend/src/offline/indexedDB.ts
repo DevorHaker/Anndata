@@ -20,7 +20,10 @@ export class SmartProcureDB {
   private dbPromise: Promise<IDBDatabase>;
 
   constructor() {
-    this.dbPromise = this.initDB();
+    this.dbPromise = this.initDB().catch((err) => {
+      // In SSR or test environments where IndexedDB is unavailable, degrade gracefully
+      return null as any;
+    });
   }
 
   private initDB(): Promise<IDBDatabase> {
@@ -50,6 +53,7 @@ export class SmartProcureDB {
 
   public async savePendingAction(action: OfflineAction): Promise<void> {
     const db = await this.dbPromise;
+    if (!db) return;
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_PENDING_ACTIONS, 'readwrite');
       const store = tx.objectStore(STORE_PENDING_ACTIONS);
@@ -61,6 +65,7 @@ export class SmartProcureDB {
 
   public async getPendingActions(): Promise<OfflineAction[]> {
     const db = await this.dbPromise;
+    if (!db) return [];
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_PENDING_ACTIONS, 'readonly');
       const store = tx.objectStore(STORE_PENDING_ACTIONS);
@@ -75,6 +80,7 @@ export class SmartProcureDB {
 
   public async removeAction(actionId: string): Promise<void> {
     const db = await this.dbPromise;
+    if (!db) return;
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_PENDING_ACTIONS, 'readwrite');
       const store = tx.objectStore(STORE_PENDING_ACTIONS);
@@ -86,6 +92,7 @@ export class SmartProcureDB {
 
   public async updateActionStatus(actionId: string, status: OfflineAction['status']): Promise<void> {
     const db = await this.dbPromise;
+    if (!db) return;
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_PENDING_ACTIONS, 'readwrite');
       const store = tx.objectStore(STORE_PENDING_ACTIONS);
