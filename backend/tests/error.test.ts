@@ -14,11 +14,11 @@ describe("Error Handling Middleware", () => {
   });
 
   it("should return standard 501 response for un-implemented business module endpoints", async () => {
-    const res = await request(app).get("/api/v1/analytics");
+    const res = await request(app).get("/api/v1/audit");
 
     expect(res.status).toBe(501);
     expect(res.body.success).toBe(false);
     expect(res.body.error.code).toBe("NOT_IMPLEMENTED");
-    expect(res.body.error.message).toContain("Analytics & Reporting Engine");
+    expect(res.body.error.message).toContain("Audit Logging");
   });
 });
