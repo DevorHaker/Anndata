@@ -1,23 +1,13 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { LogOut, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AssistedModeToggle } from '../components/AssistedModeToggle';
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
-  const location = useLocation();
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Features', path: '/#features' },
-    { name: 'How it works', path: '/#how-it-works' },
-    { name: 'Centres', path: '/centres' },
-    { name: 'Innovation', path: '/intelligence' },
-    { name: 'Registration', path: '/register' },
-    { name: 'Demo', path: '/farmer' },
-    { name: 'Help', path: '/health' },
-  ];
+
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-emerald-100/80 px-4 md:px-8 py-3 text-slate-800 flex items-center justify-between shadow-sm">
@@ -38,23 +28,7 @@ export const Header: React.FC = () => {
         </Link>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="hidden xl:flex items-center gap-6 text-xs font-semibold text-slate-600">
-        {navLinks.map((link) => {
-          const isActive = location.pathname === link.path;
-          return (
-            <Link
-              key={link.name}
-              to={link.path}
-              className={`transition-colors hover:text-[#0d6e48] ${
-                isActive ? 'text-[#0d6e48] font-bold' : ''
-              }`}
-            >
-              {link.name}
-            </Link>
-          );
-        })}
-      </nav>
+
 
       {/* Action Badges & Buttons */}
       <div className="flex items-center gap-3">
