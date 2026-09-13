@@ -11,10 +11,7 @@ import {
   SlidersHorizontal,
   Play,
   RotateCcw,
-  ShieldAlert,
-  ShieldCheck,
-  Check,
-  X
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -192,26 +189,26 @@ export const AdminPaymentsPage: React.FC = () => {
     switch (status) {
       case 'PAYMENT_SUCCESS':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold rounded-full">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Disbursed
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#e6f7ef] border border-[#b2e8cf] text-[#0d6e48] text-xs font-bold rounded-full">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#0d6e48]" /> Disbursed
           </span>
         );
       case 'PAYMENT_PENDING':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold rounded-full">
-            <Clock className="w-3.5 h-3.5 animate-pulse" /> Pending Validation
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold rounded-full">
+            <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" /> Pending Validation
           </span>
         );
       case 'PAYMENT_VALIDATED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold rounded-full">
-            <ShieldCheck className="w-3.5 h-3.5" /> Ready to Process
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold rounded-full">
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" /> Ready to Process
           </span>
         );
       case 'PAYMENT_RETRY':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold rounded-full">
-            <AlertCircle className="w-3.5 h-3.5" /> Retrying (Timeout)
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold rounded-full">
+            <AlertCircle className="w-3.5 h-3.5 text-rose-600" /> Retrying (Timeout)
           </span>
         );
       default:
@@ -220,54 +217,54 @@ export const AdminPaymentsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 glass-panel p-4 rounded-xl border border-emerald-500/40 bg-slate-900/90 text-emerald-300 text-xs font-medium shadow-2xl flex items-center gap-3">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl border border-[#b2e8cf] bg-[#e6f7ef] text-[#0d6e48] text-xs font-bold shadow-2xl flex items-center gap-3">
+          <CheckCircle2 className="w-5 h-5 text-[#0d6e48] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-6 rounded-2xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl">
+          <div className="p-3 bg-[#e6f7ef] border border-[#b2e8cf] text-[#0d6e48] rounded-2xl">
             <CreditCard className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-100">Payment & Disbursement Management Console</h1>
-            <p className="text-xs text-slate-400">Phase 10 — Mandi Officer & Admin Authorization, DBT Validation & Retry Controls</p>
+            <h1 className="text-2xl font-bold font-serif-header text-slate-900">Payment &amp; Disbursement Management Console</h1>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">Mandi Officer &amp; Admin Authorization, DBT Validation &amp; Retry Controls</p>
           </div>
         </div>
 
         <button
           onClick={() => setPayments([...payments])}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-medium border border-slate-700 transition"
+          className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold border border-slate-200 shadow-sm transition w-fit"
         >
-          <RefreshCw className="w-3.5 h-3.5" /> Refresh Queue
+          <RefreshCw className="w-3.5 h-3.5 text-[#0d6e48]" /> Refresh Queue
         </button>
       </div>
 
       {/* Filter Controls */}
-      <div className="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           <input
             type="text"
             placeholder="Search Farmer Name, Payment Ref, or Procurement..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-blue-500/50"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-[#0d6e48]"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <SlidersHorizontal className="w-4 h-4 text-slate-500" />
-          <span className="text-xs text-slate-400 font-medium">Status Filter:</span>
+          <SlidersHorizontal className="w-4 h-4 text-slate-400" />
+          <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Status Filter:</span>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-blue-500/50"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-[#0d6e48]"
           >
             <option value="ALL">All Statuses</option>
             <option value="PAYMENT_PENDING">Pending Validation</option>
@@ -280,56 +277,56 @@ export const AdminPaymentsPage: React.FC = () => {
 
       {/* Admin Table */}
       {loading ? (
-        <div className="glass-panel p-12 text-center rounded-2xl border border-slate-800">
-          <RefreshCw className="w-8 h-8 text-blue-400 animate-spin mx-auto mb-3" />
-          <p className="text-sm text-slate-400">Loading disbursement queue...</p>
+        <div className="bg-white p-12 text-center rounded-3xl border border-slate-200 shadow-sm">
+          <RefreshCw className="w-8 h-8 text-[#0d6e48] animate-spin mx-auto mb-3" />
+          <p className="text-sm text-slate-500 font-medium">Loading disbursement queue...</p>
         </div>
       ) : filteredPayments.length === 0 ? (
-        <div className="glass-panel p-12 text-center rounded-2xl border border-slate-800">
-          <FileText className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-          <h3 className="text-base font-semibold text-slate-300">No Records Match</h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">Adjust filters or search parameters.</p>
+        <div className="bg-white p-12 text-center rounded-3xl border border-slate-200 shadow-sm">
+          <FileText className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+          <h3 className="text-base font-bold font-serif-header text-slate-900">No Records Match</h3>
+          <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 font-medium">Adjust filters or search parameters.</p>
         </div>
       ) : (
-        <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
+        <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-slate-800 bg-slate-900/60 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                <tr className="border-b border-slate-200 bg-slate-50 font-semibold text-slate-500 uppercase tracking-wider">
                   <th className="py-3 px-4">Payment Ref</th>
                   <th className="py-3 px-4">Farmer Details</th>
-                  <th className="py-3 px-4">Procurement & Weight</th>
+                  <th className="py-3 px-4">Procurement &amp; Weight</th>
                   <th className="py-3 px-4">Net Amount</th>
                   <th className="py-3 px-4">Bank Destination</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-xs">
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                 {filteredPayments.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-900/40 transition">
-                    <td className="py-3.5 px-4 font-mono font-semibold text-slate-200">
+                  <tr key={p.id} className="hover:bg-slate-50/60 transition">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#0d6e48]">
                       {p.paymentReferenceId}
                     </td>
                     <td className="py-3.5 px-4">
-                      <p className="font-semibold text-slate-200">{p.farmerName}</p>
+                      <p className="font-bold text-slate-900">{p.farmerName}</p>
                       <p className="text-[11px] text-slate-400 font-mono">{p.farmerId}</p>
                     </td>
                     <td className="py-3.5 px-4">
-                      <p className="font-mono text-slate-300">{p.procurementReferenceId}</p>
-                      <p className="text-[11px] text-slate-400">{p.acceptedQuantityKg} kg @ ₹{p.ratePerQuintal}/Q</p>
+                      <p className="font-mono text-slate-700">{p.procurementReferenceId}</p>
+                      <p className="text-[11px] text-slate-500">{p.acceptedQuantityKg} kg @ ₹{p.ratePerQuintal}/Q</p>
                     </td>
                     <td className="py-3.5 px-4">
-                      <p className="font-bold text-emerald-400 text-sm">₹{p.netPayableAmount.toLocaleString('en-IN')}</p>
+                      <p className="font-bold text-[#0d6e48] text-sm font-serif-header">₹{p.netPayableAmount.toLocaleString('en-IN')}</p>
                     </td>
                     <td className="py-3.5 px-4">
-                      <p className="text-slate-200 font-medium">{p.bankName}</p>
-                      <p className="text-[11px] text-slate-400 font-mono">{p.destinationReference}</p>
+                      <p className="text-slate-900 font-bold">{p.bankName}</p>
+                      <p className="text-[11px] text-slate-500 font-mono">{p.destinationReference}</p>
                     </td>
                     <td className="py-3.5 px-4">
                       {getStatusBadge(p.status)}
                       {p.providerTransactionRef && (
-                        <p className="text-[10px] font-mono text-emerald-400 mt-1">UTR: {p.providerTransactionRef}</p>
+                        <p className="text-[10px] font-mono text-[#0d6e48] font-bold mt-1">UTR: {p.providerTransactionRef}</p>
                       )}
                     </td>
                     <td className="py-3.5 px-4 text-right">
@@ -338,7 +335,7 @@ export const AdminPaymentsPage: React.FC = () => {
                           <button
                             disabled={processingId === p.id}
                             onClick={() => handleValidateAccount(p.id)}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 rounded-xl text-xs font-semibold transition"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition"
                           >
                             <ShieldCheck className="w-3.5 h-3.5" /> Validate
                           </button>
@@ -348,7 +345,7 @@ export const AdminPaymentsPage: React.FC = () => {
                           <button
                             disabled={processingId === p.id}
                             onClick={() => handleProcessDisbursement(p.id)}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition shadow-lg"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-[#0d6e48] hover:bg-[#095235] text-white rounded-xl text-xs font-bold transition shadow-md"
                           >
                             {processingId === p.id ? (
                               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -363,14 +360,14 @@ export const AdminPaymentsPage: React.FC = () => {
                           <button
                             disabled={processingId === p.id}
                             onClick={() => handleRetryDisbursement(p.id)}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold transition"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Retry Disbursement
                           </button>
                         )}
 
                         {p.status === 'PAYMENT_SUCCESS' && (
-                          <span className="text-[11px] text-slate-500 font-mono">Audited & Locked</span>
+                          <span className="text-[11px] text-slate-400 font-mono">Audited &amp; Locked</span>
                         )}
                       </div>
                     </td>

@@ -93,16 +93,16 @@ export const NotificationsPage: React.FC = () => {
   const unreadCount = notifications.filter((n) => !n.readAt).length;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-2 md:p-6 max-w-6xl mx-auto space-y-6 font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-slate-200/80 p-6 rounded-3xl shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400">
+          <div className="p-3 bg-[#e6f7ef] border border-[#b2e8cf] rounded-2xl text-[#0d6e48]">
             <Bell className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold text-white">{t('notificationsTitle')}</h1>
-            <p className="text-sm text-slate-400">
+            <h1 className="text-2xl font-bold font-serif-header text-slate-900">{t('notificationsTitle')}</h1>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
               {t('unreadCount', { count: unreadCount })}
             </p>
           </div>
@@ -111,20 +111,20 @@ export const NotificationsPage: React.FC = () => {
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setActiveTab('inbox')}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'inbox'
-                ? 'bg-emerald-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:text-white'
+                ? 'bg-[#0d6e48] text-white shadow-md'
+                : 'bg-slate-100 text-slate-600 hover:text-slate-900'
             }`}
           >
             {t('notifications')}
           </button>
           <button
             onClick={() => setActiveTab('preferences')}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center space-x-1.5 ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 ${
               activeTab === 'preferences'
-                ? 'bg-emerald-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:text-white'
+                ? 'bg-[#0d6e48] text-white shadow-md'
+                : 'bg-slate-100 text-slate-600 hover:text-slate-900'
             }`}
           >
             <Settings className="w-4 h-4" />
@@ -140,7 +140,7 @@ export const NotificationsPage: React.FC = () => {
             <button
               onClick={markAllAsRead}
               disabled={unreadCount === 0}
-              className="flex items-center space-x-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 disabled:opacity-40"
+              className="flex items-center space-x-1 text-xs font-bold text-[#0d6e48] hover:text-emerald-800 disabled:opacity-40"
             >
               <CheckCheck className="w-4 h-4" />
               <span>{t('markAllRead')}</span>
@@ -148,9 +148,9 @@ export const NotificationsPage: React.FC = () => {
           </div>
 
           {loading ? (
-            <div className="p-8 text-center text-slate-400">Loading notifications...</div>
+            <div className="p-8 text-center text-slate-500 font-medium">Loading notifications...</div>
           ) : notifications.length === 0 ? (
-            <div className="p-12 text-center bg-slate-900/60 border border-slate-800/80 rounded-2xl text-slate-400">
+            <div className="p-12 text-center bg-white border border-slate-200 rounded-3xl text-slate-500 shadow-sm font-medium">
               {t('noNotifications')}
             </div>
           ) : (
@@ -158,28 +158,28 @@ export const NotificationsPage: React.FC = () => {
               {notifications.map((notif) => (
                 <div
                   key={notif.id}
-                  className={`p-4 rounded-xl border transition-all ${
+                  className={`p-5 rounded-2xl border transition-all ${
                     notif.readAt
-                      ? 'bg-slate-900/40 border-slate-800/60 text-slate-300'
-                      : 'bg-emerald-950/20 border-emerald-500/40 text-white shadow-sm'
+                      ? 'bg-white border-slate-200 text-slate-700'
+                      : 'bg-[#e6f7ef] border-[#b2e8cf] text-slate-900 shadow-sm'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
-                        <span className="font-bold text-base text-emerald-400">{notif.title}</span>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                        <span className="font-bold text-base text-[#0d6e48] font-serif-header">{notif.title}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200 uppercase">
                           {notif.channel}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-300">{notif.message}</p>
-                      <p className="text-xs text-slate-500">{new Date(notif.createdAt).toLocaleString()}</p>
+                      <p className="text-xs sm:text-sm text-slate-600 font-medium">{notif.message}</p>
+                      <p className="text-[10px] text-slate-400 font-mono">{new Date(notif.createdAt).toLocaleString()}</p>
                     </div>
 
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => voiceAssistanceService.speak(notif.message, language)}
-                        className="text-xs text-slate-400 hover:text-amber-400 p-1"
+                        className="text-xs text-slate-400 hover:text-amber-500 p-1"
                         title="Read aloud"
                       >
                         🔊
@@ -187,7 +187,7 @@ export const NotificationsPage: React.FC = () => {
                       {!notif.readAt && (
                         <button
                           onClick={() => markAsRead(notif.id)}
-                          className="p-1.5 bg-emerald-600/20 text-emerald-400 rounded-lg hover:bg-emerald-600/40"
+                          className="p-1.5 bg-[#0d6e48] text-white rounded-lg hover:bg-[#095235] transition"
                           title="Mark Read"
                         >
                           <Check className="w-4 h-4" />
@@ -204,70 +204,70 @@ export const NotificationsPage: React.FC = () => {
 
       {/* Tab 2: Preferences */}
       {activeTab === 'preferences' && (
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-6">
-          <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+        <div className="bg-white border border-slate-200/80 p-6 rounded-3xl shadow-sm space-y-6">
+          <h2 className="text-lg font-bold font-serif-header text-slate-900 flex items-center space-x-2">
+            <ShieldCheck className="w-5 h-5 text-[#0d6e48]" />
             <span>Multichannel Delivery Channels</span>
           </h2>
 
           <div className="space-y-4 max-w-xl">
-            <label className="flex items-center justify-between p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl cursor-pointer">
+            <label className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-100/60 transition">
               <div className="flex items-center space-x-3">
-                <Smartphone className="w-5 h-5 text-emerald-400" />
+                <Smartphone className="w-5 h-5 text-[#0d6e48]" />
                 <div>
-                  <span className="text-sm font-bold text-white block">{t('smsEnabled')}</span>
-                  <span className="text-xs text-slate-400">Critical slot & payment SMS alerts</span>
+                  <span className="text-xs font-bold text-slate-900 block">{t('smsEnabled')}</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Critical slot & payment SMS alerts</span>
                 </div>
               </div>
               <input
                 type="checkbox"
                 checked={preferences.smsEnabled}
                 onChange={(e) => setPreferences({ ...preferences, smsEnabled: e.target.checked })}
-                className="w-5 h-5 accent-emerald-500 rounded"
+                className="w-5 h-5 accent-[#0d6e48] rounded"
               />
             </label>
 
-            <label className="flex items-center justify-between p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl cursor-pointer">
+            <label className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-100/60 transition">
               <div className="flex items-center space-x-3">
-                <Bell className="w-5 h-5 text-emerald-400" />
+                <Bell className="w-5 h-5 text-[#0d6e48]" />
                 <div>
-                  <span className="text-sm font-bold text-white block">{t('pushEnabled')}</span>
-                  <span className="text-xs text-slate-400">Real-time queue ETA & call alerts</span>
+                  <span className="text-xs font-bold text-slate-900 block">{t('pushEnabled')}</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Real-time queue ETA & call alerts</span>
                 </div>
               </div>
               <input
                 type="checkbox"
                 checked={preferences.pushEnabled}
                 onChange={(e) => setPreferences({ ...preferences, pushEnabled: e.target.checked })}
-                className="w-5 h-5 accent-emerald-500 rounded"
+                className="w-5 h-5 accent-[#0d6e48] rounded"
               />
             </label>
 
-            <label className="flex items-center justify-between p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl cursor-pointer">
+            <label className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-100/60 transition">
               <div className="flex items-center space-x-3">
-                <MessageSquare className="w-5 h-5 text-emerald-400" />
+                <MessageSquare className="w-5 h-5 text-[#0d6e48]" />
                 <div>
-                  <span className="text-sm font-bold text-white block">{t('inAppEnabled')}</span>
-                  <span className="text-xs text-slate-400">Dashboard inbox notifications</span>
+                  <span className="text-xs font-bold text-slate-900 block">{t('inAppEnabled')}</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Dashboard inbox notifications</span>
                 </div>
               </div>
               <input
                 type="checkbox"
                 checked={preferences.inAppEnabled}
                 onChange={(e) => setPreferences({ ...preferences, inAppEnabled: e.target.checked })}
-                className="w-5 h-5 accent-emerald-500 rounded"
+                className="w-5 h-5 accent-[#0d6e48] rounded"
               />
             </label>
 
             <div className="pt-2">
               <button
                 onClick={handleSavePreferences}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all"
+                className="w-full bg-[#0d6e48] hover:bg-[#095235] text-white font-bold text-xs py-3 rounded-xl transition-all shadow-md"
               >
                 {t('savePreferences')}
               </button>
               {saveSuccess && (
-                <p className="text-xs font-bold text-emerald-400 text-center mt-2">
+                <p className="text-xs font-bold text-[#0d6e48] text-center mt-2">
                   {t('preferencesSaved')}
                 </p>
               )}

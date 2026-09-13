@@ -5,6 +5,7 @@ import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { Select } from '../components/Select';
 import {
   ProcurementCentreDetail,
   CentreCapacityConfig,
@@ -20,14 +21,12 @@ import {
   AlertOctagon,
   Gauge,
   Users,
-  Wrench,
   PlusCircle,
   MapPin,
   AlertTriangle,
   CheckCircle2,
   Search,
   Activity,
-  Layers,
   QrCode,
   Scale
 } from 'lucide-react';
@@ -271,22 +270,22 @@ export const CentrePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Top Banner & Control Bar */}
-      <div className="glass-card p-6 rounded-2xl border border-slate-800 bg-slate-900/60 relative overflow-hidden">
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
+            <div className="p-3 bg-[#e6f7ef] border border-[#b2e8cf] rounded-2xl text-[#0d6e48]">
               <Building2 className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+              <h1 className="text-2xl font-bold font-serif-header text-slate-900 flex items-center gap-2">
                 {selectedCentre ? selectedCentre.name : 'Procurement Centre Control Room'}
               </h1>
-              <p className="text-sm text-slate-400 flex items-center gap-2 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 font-medium flex items-center gap-2 mt-0.5">
                 {selectedCentre ? (
                   <>
-                    <span className="font-mono text-emerald-400">Code: {selectedCentre.centreCode}</span>
+                    <span className="font-mono font-bold text-[#0d6e48]">Code: {selectedCentre.centreCode}</span>
                     <span>•</span>
                     <span>District: {selectedCentre.district}</span>
                   </>
@@ -315,30 +314,30 @@ export const CentrePage: React.FC = () => {
 
       {/* Notifications */}
       {error && (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm flex items-center gap-2">
-          <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+        <div className="p-4 rounded-2xl bg-[#e6f7ef] border border-[#b2e8cf] text-[#0d6e48] text-xs font-bold flex items-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-[#0d6e48] flex-shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {/* Centre Switcher & Filter */}
-      <div className="glass-card p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <span className="text-xs font-semibold text-slate-400 whitespace-nowrap">Select Centre:</span>
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Select Centre:</span>
           <select
             value={selectedCentre?.id || ''}
             onChange={(e) => {
               const target = centres.find((c) => c.id === e.target.value);
               if (target) setSelectedCentre(target);
             }}
-            className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 w-full md:w-72"
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-[#0d6e48] w-full md:w-72"
           >
             {centres.map((c) => (
               <option key={c.id} value={c.id}>
@@ -350,13 +349,13 @@ export const CentrePage: React.FC = () => {
 
         <div className="flex gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-48">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
             <input
               type="text"
               placeholder="Search code/name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-[#0d6e48]"
             />
           </div>
           <Button variant="outline" onClick={fetchCentres}>
@@ -366,63 +365,63 @@ export const CentrePage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-800 space-x-4">
+      <div className="flex border-b border-slate-200 overflow-x-auto space-x-6">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'overview'
-              ? 'border-emerald-500 text-emerald-400'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           <Activity className="w-4 h-4" /> Centre Overview
         </button>
         <button
           onClick={() => setActiveTab('capacity')}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'capacity'
-              ? 'border-emerald-500 text-emerald-400'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           <Gauge className="w-4 h-4" /> Capacity & Throughput
         </button>
         <button
           onClick={() => setActiveTab('disruptions')}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'disruptions'
-              ? 'border-emerald-500 text-emerald-400'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           <AlertOctagon className="w-4 h-4" /> Operational Disruptions ({disruptions.length})
         </button>
         <button
           onClick={() => setActiveTab('staff')}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'staff'
-              ? 'border-emerald-500 text-emerald-400'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           <Users className="w-4 h-4" /> Staff & Infrastructure
         </button>
         <button
           onClick={() => setActiveTab('queue')}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'queue'
-              ? 'border-emerald-500 text-emerald-400'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           <QrCode className="w-4 h-4" /> Gate Check-In & Queue Operations
         </button>
         <button
           onClick={() => setActiveTab('procurement')}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'procurement'
-              ? 'border-emerald-500 text-emerald-400'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
           <Scale className="w-4 h-4" /> Procurement & Weighbridge Operations
@@ -442,69 +441,69 @@ export const CentrePage: React.FC = () => {
       {/* TAB 1: Centre Overview */}
       {activeTab === 'overview' && selectedCentre && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card header={<h2 className="text-base font-bold text-slate-100">Location & Contact Details</h2>}>
-            <div className="space-y-3 text-sm text-slate-300">
+          <Card header={<h2 className="text-base font-bold font-serif-header text-slate-900">Location & Contact Details</h2>}>
+            <div className="space-y-3 text-xs text-slate-600 font-medium">
               <p className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-emerald-400 mt-1 flex-shrink-0" />
+                <MapPin className="w-4 h-4 text-[#0d6e48] mt-0.5 flex-shrink-0" />
                 <span>
                   {selectedCentre.addressText}, {selectedCentre.subDistrict}, {selectedCentre.district},{' '}
                   {selectedCentre.state} - {selectedCentre.pincode}
                 </span>
               </p>
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-1">
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1">
                 <p>
-                  Latitude: <strong className="font-mono text-slate-200">{selectedCentre.latitude}</strong>
+                  Latitude: <strong className="font-mono text-slate-900">{selectedCentre.latitude}</strong>
                 </p>
                 <p>
-                  Longitude: <strong className="font-mono text-slate-200">{selectedCentre.longitude}</strong>
+                  Longitude: <strong className="font-mono text-slate-900">{selectedCentre.longitude}</strong>
                 </p>
                 <p>
-                  Timezone: <strong className="font-mono text-slate-200">{selectedCentre.timezone}</strong>
+                  Timezone: <strong className="font-mono text-slate-900">{selectedCentre.timezone}</strong>
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card header={<h2 className="text-base font-bold text-slate-100">Configured Operational Limits</h2>}>
+          <Card header={<h2 className="text-base font-bold font-serif-header text-slate-900">Configured Operational Limits</h2>}>
             <div className="space-y-3">
-              <div className="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <span className="text-xs text-slate-400">Daily Farmer Limit</span>
-                <span className="text-sm font-bold text-emerald-400">
+              <div className="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                <span className="text-xs text-slate-500 font-medium">Daily Farmer Limit</span>
+                <span className="text-xs font-bold text-[#0d6e48]">
                   {capacity?.dailyFarmerCapacity || 100} Farmers/Day
                 </span>
               </div>
-              <div className="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <span className="text-xs text-slate-400">Daily Tonnage Limit</span>
-                <span className="text-sm font-bold text-emerald-400">
+              <div className="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                <span className="text-xs text-slate-500 font-medium">Daily Tonnage Limit</span>
+                <span className="text-xs font-bold text-[#0d6e48]">
                   {((capacity?.dailyQuantityCapacityKg || 50000) / 1000).toFixed(0)} TONS/Day
                 </span>
               </div>
-              <div className="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <span className="text-xs text-slate-400">Hourly Throughput</span>
-                <span className="text-sm font-bold text-slate-200">
+              <div className="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                <span className="text-xs text-slate-500 font-medium">Hourly Throughput</span>
+                <span className="text-xs font-bold text-slate-900">
                   {capacity?.hourlyThroughputKg || 5000} KG/hr
                 </span>
               </div>
             </div>
           </Card>
 
-          <Card header={<h2 className="text-base font-bold text-slate-100">Live Health Summary</h2>}>
+          <Card header={<h2 className="text-base font-bold font-serif-header text-slate-900">Live Health Summary</h2>}>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-400">Active Disruptions:</span>
+                <span className="text-xs text-slate-500 font-medium">Active Disruptions:</span>
                 <Badge variant={disruptions.filter((d) => d.status !== 'RESOLVED').length > 0 ? 'danger' : 'success'}>
                   {disruptions.filter((d) => d.status !== 'RESOLVED').length} Active
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-400">Weighbridges:</span>
-                <span className="text-xs font-bold text-slate-200">
+                <span className="text-xs text-slate-500 font-medium">Weighbridges:</span>
+                <span className="text-xs font-bold text-slate-900">
                   {capacity?.weighingStationCount || 2} Active Stations
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-400">Procurement Staff:</span>
-                <span className="text-xs font-bold text-slate-200">{staff.length} Assigned Officers</span>
+                <span className="text-xs text-slate-500 font-medium">Procurement Staff:</span>
+                <span className="text-xs font-bold text-slate-900">{staff.length} Assigned Officers</span>
               </div>
             </div>
           </Card>
@@ -513,7 +512,7 @@ export const CentrePage: React.FC = () => {
 
       {/* TAB 2: Capacity Configuration */}
       {activeTab === 'capacity' && selectedCentre && (
-        <Card header={<h2 className="text-lg font-bold text-slate-100">Centre Capacity & Infrastructure Controls</h2>}>
+        <Card header={<h2 className="text-base font-bold font-serif-header text-slate-900">Centre Capacity & Infrastructure Controls</h2>}>
           <form onSubmit={handleUpdateCapacity} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
@@ -572,8 +571,8 @@ export const CentrePage: React.FC = () => {
       {activeTab === 'disruptions' && selectedCentre && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <AlertOctagon className="w-5 h-5 text-rose-400" /> Operational Incidents & Disruption Log
+            <h2 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
+              <AlertOctagon className="w-5 h-5 text-rose-600" /> Operational Incidents & Disruption Log
             </h2>
             <Button onClick={() => setShowDisruptionModal(true)} variant="danger">
               <PlusCircle className="w-4 h-4 mr-1.5 inline" /> Report Incident
@@ -584,18 +583,18 @@ export const CentrePage: React.FC = () => {
             {disruptions.map((d) => (
               <div
                 key={d.id}
-                className="glass-card p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <Badge variant={d.severity === 'CRITICAL' || d.severity === 'HIGH' ? 'danger' : 'warning'}>
                       {d.severity}
                     </Badge>
-                    <h3 className="font-bold text-slate-100">{d.title}</h3>
+                    <h3 className="font-bold text-slate-900 font-serif-header">{d.title}</h3>
                     <Badge variant={d.status === 'RESOLVED' ? 'success' : 'info'}>{d.status}</Badge>
                   </div>
-                  <p className="text-xs text-slate-300">{d.description}</p>
-                  <p className="text-[11px] text-slate-500 font-mono">
+                  <p className="text-xs text-slate-600 font-medium">{d.description}</p>
+                  <p className="text-[10px] text-slate-400 font-mono">
                     Reported at: {new Date(d.createdAt).toLocaleString()}
                   </p>
                 </div>
@@ -609,9 +608,9 @@ export const CentrePage: React.FC = () => {
             ))}
 
             {disruptions.length === 0 && (
-              <div className="glass-card p-8 rounded-2xl text-center border border-slate-800 text-slate-400">
-                <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-emerald-500" />
-                <p className="font-semibold text-slate-200">No active disruptions reported.</p>
+              <div className="bg-white p-8 rounded-3xl text-center border border-slate-200 text-slate-500 shadow-sm font-medium">
+                <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-[#0d6e48]" />
+                <p className="font-bold text-slate-900 font-serif-header">No active disruptions reported.</p>
                 <p className="text-xs mt-1">Centre is operating smoothly at nominal capacity.</p>
               </div>
             )}
@@ -621,19 +620,19 @@ export const CentrePage: React.FC = () => {
 
       {/* TAB 4: Staff & Infrastructure */}
       {activeTab === 'staff' && selectedCentre && (
-        <Card header={<h2 className="text-lg font-bold text-slate-100">Assigned Operational Staff</h2>}>
+        <Card header={<h2 className="text-base font-bold font-serif-header text-slate-900">Assigned Operational Staff</h2>}>
           <div className="space-y-3">
             {staff.map((s) => (
-              <div key={s.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+              <div key={s.id} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between text-xs">
                 <div>
-                  <span className="font-bold text-slate-200 block">{s.assignmentRole}</span>
-                  <span className="text-slate-400 font-mono">{s.userId}</span>
+                  <span className="font-bold text-slate-900 block">{s.assignmentRole}</span>
+                  <span className="text-slate-500 font-mono">{s.userId}</span>
                 </div>
                 <Badge variant={s.isActive ? 'success' : 'neutral'}>{s.isActive ? 'Active Shift' : 'Inactive'}</Badge>
               </div>
             ))}
             {staff.length === 0 && (
-              <p className="text-xs text-slate-400 py-4 text-center">No dedicated staff records assigned to this centre.</p>
+              <p className="text-xs text-slate-500 font-medium py-4 text-center">No dedicated staff records assigned to this centre.</p>
             )}
           </div>
         </Card>
@@ -641,25 +640,23 @@ export const CentrePage: React.FC = () => {
 
       {/* MODAL 1: Update Operational Status */}
       {showStatusModal && selectedCentre && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h3 className="text-lg font-bold text-slate-100">Update Centre Operational State</h3>
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 className="text-lg font-bold font-serif-header text-slate-900">Update Centre Operational State</h3>
             <form onSubmit={handleUpdateStatus} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Status Code</label>
-                <select
-                  value={statusForm.status}
-                  onChange={(e) => setStatusForm({ ...statusForm, status: e.target.value as CentreOperationalStatus })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="NORMAL">NORMAL - Nominal Operations</option>
-                  <option value="BUSY">BUSY - Elevated Token Flow</option>
-                  <option value="CONGESTED">CONGESTED - Queue Delay Expected</option>
-                  <option value="CRITICAL">CRITICAL - Severe Bottleneck</option>
-                  <option value="CLOSED">CLOSED - Non-operational</option>
-                  <option value="EMERGENCY">EMERGENCY - Suspended Operations</option>
-                </select>
-              </div>
+              <Select
+                label="Status Code"
+                value={statusForm.status}
+                onChange={(e) => setStatusForm({ ...statusForm, status: e.target.value as CentreOperationalStatus })}
+                options={[
+                  { value: 'NORMAL', label: 'NORMAL - Nominal Operations' },
+                  { value: 'BUSY', label: 'BUSY - Elevated Token Flow' },
+                  { value: 'CONGESTED', label: 'CONGESTED - Queue Delay Expected' },
+                  { value: 'CRITICAL', label: 'CRITICAL - Severe Bottleneck' },
+                  { value: 'CLOSED', label: 'CLOSED - Non-operational' },
+                  { value: 'EMERGENCY', label: 'EMERGENCY - Suspended Operations' }
+                ]}
+              />
 
               <Input
                 label="Reason / Incident Explanation"
@@ -684,9 +681,9 @@ export const CentrePage: React.FC = () => {
 
       {/* MODAL 2: Register Procurement Centre */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold text-slate-100">Register New Procurement Centre</h3>
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <h3 className="text-lg font-bold font-serif-header text-slate-900">Register New Procurement Centre</h3>
             <form onSubmit={handleCreateCentre} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <Input
@@ -782,52 +779,48 @@ export const CentrePage: React.FC = () => {
 
       {/* MODAL 3: Report Disruption */}
       {showDisruptionModal && selectedCentre && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h3 className="text-lg font-bold text-slate-100">Report Operational Incident</h3>
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 className="text-lg font-bold font-serif-header text-slate-900">Report Operational Incident</h3>
             <form onSubmit={handleReportDisruption} className="space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Disruption Type</label>
-                <select
-                  value={disruptionForm.disruptionType}
-                  onChange={(e) => setDisruptionForm({ ...disruptionForm, disruptionType: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="EQUIPMENT_FAILURE">Equipment Failure (Weighbridge/PC)</option>
-                  <option value="POWER_OUTAGE">Power Grid Failure</option>
-                  <option value="NETWORK_DISRUPTION">Internet / Network Outage</option>
-                  <option value="WEATHER_EVENT">Severe Rain / Weather Event</option>
-                  <option value="TRAFFIC_CONGESTION">Traffic & Access Blockade</option>
-                </select>
-              </div>
+              <Select
+                label="Disruption Type"
+                value={disruptionForm.disruptionType}
+                onChange={(e) => setDisruptionForm({ ...disruptionForm, disruptionType: e.target.value })}
+                options={[
+                  { value: 'EQUIPMENT_FAILURE', label: 'Equipment Failure (Weighbridge/PC)' },
+                  { value: 'POWER_OUTAGE', label: 'Power Grid Failure' },
+                  { value: 'NETWORK_DISRUPTION', label: 'Internet / Network Outage' },
+                  { value: 'WEATHER_EVENT', label: 'Severe Rain / Weather Event' },
+                  { value: 'TRAFFIC_CONGESTION', label: 'Traffic & Access Blockade' }
+                ]}
+              />
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Severity</label>
-                <select
-                  value={disruptionForm.severity}
-                  onChange={(e) => setDisruptionForm({ ...disruptionForm, severity: e.target.value as DisruptionSeverity })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="LOW">LOW - Minor Impact</option>
-                  <option value="MEDIUM">MEDIUM - Moderate Bottleneck</option>
-                  <option value="HIGH">HIGH - Major Slowdown</option>
-                  <option value="CRITICAL">CRITICAL - Operational Halting</option>
-                </select>
-              </div>
+              <Select
+                label="Severity Level"
+                value={disruptionForm.severity}
+                onChange={(e) => setDisruptionForm({ ...disruptionForm, severity: e.target.value as DisruptionSeverity })}
+                options={[
+                  { value: 'LOW', label: 'Low Impact' },
+                  { value: 'MEDIUM', label: 'Medium Impact' },
+                  { value: 'HIGH', label: 'High Impact' },
+                  { value: 'CRITICAL', label: 'Critical Facility Shutdown' }
+                ]}
+              />
 
               <Input
-                label="Incident Title"
+                label="Incident Headline"
                 value={disruptionForm.title}
                 onChange={(e) => setDisruptionForm({ ...disruptionForm, title: e.target.value })}
-                placeholder="e.g. Weighbridge 2 Load Cell Error"
+                placeholder="e.g. Primary 100T Weighbridge Sensor Calibration Fault"
                 required
               />
 
               <Input
-                label="Description & Mitigation Actions"
+                label="Detailed Description"
                 value={disruptionForm.description}
                 onChange={(e) => setDisruptionForm({ ...disruptionForm, description: e.target.value })}
-                placeholder="Technician dispatched for calibration"
+                placeholder="e.g. Weighbridge 1 sensor offline due to short circuit..."
                 required
               />
 
@@ -836,7 +829,7 @@ export const CentrePage: React.FC = () => {
                   Cancel
                 </Button>
                 <Button type="submit" variant="danger" isLoading={saving}>
-                  Report Incident
+                  Log Incident
                 </Button>
               </div>
             </form>

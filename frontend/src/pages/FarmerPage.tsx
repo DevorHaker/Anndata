@@ -6,6 +6,7 @@ import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { Select } from '../components/Select';
 import {
   FarmerDetail,
   FarmerProduceDetail,
@@ -229,23 +230,23 @@ export const FarmerPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Header Banner */}
-      <div className="glass-card p-6 rounded-2xl border border-slate-800 bg-slate-900/60 relative overflow-hidden">
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
           <div>
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
+              <div className="p-3 bg-[#e6f7ef] border border-[#b2e8cf] rounded-2xl text-[#0d6e48]">
                 <User className="w-7 h-7" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+                <h1 className="text-2xl font-bold font-serif-header text-slate-900 flex items-center gap-2">
                   {farmer ? `${farmer.firstName} ${farmer.lastName}` : 'Farmer Management Portal'}
                 </h1>
-                <p className="text-sm text-slate-400 flex items-center gap-2 mt-0.5">
+                <p className="text-xs sm:text-sm text-slate-500 font-medium flex flex-wrap items-center gap-2 mt-0.5">
                   {farmer && (
                     <>
-                      <span className="font-mono text-emerald-400">Ref ID: {farmer.farmerReferenceId}</span>
+                      <span className="font-mono font-bold text-[#0d6e48]">Ref ID: {farmer.farmerReferenceId}</span>
                       <span>•</span>
                       <span>Mobile: {user?.mobileNumber}</span>
                     </>
@@ -267,69 +268,69 @@ export const FarmerPage: React.FC = () => {
 
       {/* Notifications */}
       {error && (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm flex items-center gap-2">
-          <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+        <div className="p-4 rounded-2xl bg-[#e6f7ef] border border-[#b2e8cf] text-[#0d6e48] text-xs font-bold flex items-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-[#0d6e48] flex-shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-800 space-x-4">
+      <div className="flex border-b border-slate-200 overflow-x-auto space-x-6">
         {(user?.role === 'FARMER' || user?.farmerId) && (
           <>
             <button
               onClick={() => setActiveTab('profile')}
-              className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+              className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
                 activeTab === 'profile'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-[#0d6e48] text-[#0d6e48]'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               <User className="w-4 h-4" /> Profile & Land Holdings
             </button>
             <button
               onClick={() => setActiveTab('produce')}
-              className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+              className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
                 activeTab === 'produce'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-[#0d6e48] text-[#0d6e48]'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               <Wheat className="w-4 h-4" /> Produce Declarations ({produceList.length})
             </button>
             <button
               onClick={() => setActiveTab('centres')}
-              className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+              className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
                 activeTab === 'centres'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-[#0d6e48] text-[#0d6e48]'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               <Building2 className="w-4 h-4" /> Eligible Procurement Centres
             </button>
             <button
               onClick={() => setActiveTab('tokens')}
-              className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+              className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
                 activeTab === 'tokens'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-[#0d6e48] text-[#0d6e48]'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               <QrCode className="w-4 h-4" /> Digital Token & Live Queue
             </button>
             <button
               onClick={() => setActiveTab('procurements')}
-              className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+              className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
                 activeTab === 'procurements'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-[#0d6e48] text-[#0d6e48]'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               <Scale className="w-4 h-4" /> Procurement History ({procurementList.length})
@@ -342,10 +343,10 @@ export const FarmerPage: React.FC = () => {
           user?.role === 'CENTRE_MANAGER') && (
           <button
             onClick={() => setActiveTab('admin')}
-            className={`pb-3 text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+            className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'admin'
-                ? 'border-emerald-500 text-emerald-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#0d6e48] text-[#0d6e48]'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
             <ShieldCheck className="w-4 h-4" /> Admin Farmer Registry
@@ -355,7 +356,7 @@ export const FarmerPage: React.FC = () => {
 
       {/* TAB 1: Profile & Land Holdings */}
       {activeTab === 'profile' && farmer && (
-        <Card header={<h2 className="text-lg font-bold text-slate-100">Farmer Demographics & Land Verification</h2>}>
+        <Card header={<h2 className="text-base font-bold font-serif-header text-slate-900">Farmer Demographics & Land Verification</h2>}>
           <form onSubmit={handleUpdateProfile} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
@@ -370,24 +371,22 @@ export const FarmerPage: React.FC = () => {
                 onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
                 required
               />
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Gender</label>
-                <select
-                  value={editForm.gender}
-                  onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
-                  <option value="OTHER">Other</option>
-                </select>
-              </div>
+              <Select
+                label="Gender"
+                value={editForm.gender}
+                onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
+                options={[
+                  { value: 'MALE', label: 'Male' },
+                  { value: 'FEMALE', label: 'Female' },
+                  { value: 'OTHER', label: 'Other' }
+                ]}
+              />
             </div>
 
-            <hr className="border-slate-800" />
+            <hr className="border-slate-100" />
 
-            <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-emerald-400" /> Land Holding & Geographic Address
+            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-[#0d6e48]" /> Land Holding & Geographic Address
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -443,8 +442,8 @@ export const FarmerPage: React.FC = () => {
       {activeTab === 'produce' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <Wheat className="w-5 h-5 text-emerald-400" /> Declared Harvest & Produce Records
+            <h2 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
+              <Wheat className="w-5 h-5 text-[#0d6e48]" /> Declared Harvest & Produce Records
             </h2>
             <Button onClick={() => setShowProduceModal(true)}>
               <PlusCircle className="w-4 h-4 mr-1.5 inline" /> Declare New Harvest
@@ -453,37 +452,27 @@ export const FarmerPage: React.FC = () => {
 
           {/* Declare Produce Modal */}
           {showProduceModal && (
-            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="glass-card bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4">
-                <h3 className="text-lg font-bold text-slate-100">Declare Harvest Yield</h3>
+            <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+                <h3 className="text-lg font-bold font-serif-header text-slate-900">Declare Harvest Yield</h3>
                 <form onSubmit={handleDeclareProduce} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Crop Type</label>
-                    <select
-                      value={produceForm.cropTypeId}
-                      onChange={(e) => setProduceForm({ ...produceForm, cropTypeId: e.target.value })}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-                    >
-                      {crops.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name} ({c.category})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    label="Crop Type"
+                    value={produceForm.cropTypeId}
+                    onChange={(e) => setProduceForm({ ...produceForm, cropTypeId: e.target.value })}
+                    options={crops.map((c) => ({ value: c.id, label: `${c.name} (${c.category})` }))}
+                  />
 
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Harvest Season</label>
-                    <select
-                      value={produceForm.harvestSeason}
-                      onChange={(e) => setProduceForm({ ...produceForm, harvestSeason: e.target.value })}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
-                    >
-                      <option value="RABI_2026">Rabi 2026</option>
-                      <option value="KHARIF_2026">Kharif 2026</option>
-                      <option value="ZAID_2026">Zaid 2026</option>
-                    </select>
-                  </div>
+                  <Select
+                    label="Harvest Season"
+                    value={produceForm.harvestSeason}
+                    onChange={(e) => setProduceForm({ ...produceForm, harvestSeason: e.target.value })}
+                    options={[
+                      { value: 'RABI_2026', label: 'Rabi 2026' },
+                      { value: 'KHARIF_2026', label: 'Kharif 2026' },
+                      { value: 'ZAID_2026', label: 'Zaid 2026' }
+                    ]}
+                  />
 
                   <Input
                     label="Estimated Yield (KG)"
@@ -519,30 +508,30 @@ export const FarmerPage: React.FC = () => {
               <Card key={item.id}>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-100 flex items-center gap-2 text-base">
-                      <Wheat className="w-4 h-4 text-emerald-400" />
+                    <span className="font-bold text-slate-900 font-serif-header flex items-center gap-2 text-base">
+                      <Wheat className="w-4 h-4 text-[#0d6e48]" />
                       {crops.find((c) => c.id === item.cropTypeId)?.name || 'Harvest Produce'}
                     </span>
                     <Badge variant="info">{item.harvestSeason}</Badge>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-                      <span className="text-slate-400 block">Declared Quantity</span>
-                      <span className="text-emerald-400 font-bold text-sm">
+                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                      <span className="text-slate-500 font-medium block">Declared Quantity</span>
+                      <span className="text-[#0d6e48] font-bold text-sm">
                         {item.declaredQuantityKg.toLocaleString()} KG
                       </span>
                     </div>
-                    <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-                      <span className="text-slate-400 block">Procured Quantity</span>
-                      <span className="text-slate-200 font-bold text-sm">
+                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                      <span className="text-slate-500 font-medium block">Procured Quantity</span>
+                      <span className="text-slate-900 font-bold text-sm">
                         {item.procuredQuantityKg.toLocaleString()} KG
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center text-xs text-slate-400 pt-1">
-                    <span>Status: <strong className="text-slate-200">{item.status}</strong></span>
+                  <div className="flex justify-between items-center text-xs text-slate-500 pt-1 font-medium">
+                    <span>Status: <strong className="text-slate-900">{item.status}</strong></span>
                     <span>Declared: {new Date(item.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -550,9 +539,9 @@ export const FarmerPage: React.FC = () => {
             ))}
 
             {produceList.length === 0 && (
-              <div className="col-span-2 glass-card p-8 rounded-2xl text-center border border-slate-800 text-slate-400">
-                <Wheat className="w-10 h-10 mx-auto mb-2 text-slate-600" />
-                <p className="font-semibold text-slate-200">No produce declarations recorded yet.</p>
+              <div className="col-span-2 bg-white p-8 rounded-3xl text-center border border-slate-200 text-slate-500 shadow-sm font-medium">
+                <Wheat className="w-10 h-10 mx-auto mb-2 text-slate-400" />
+                <p className="font-bold text-slate-900 font-serif-header">No produce declarations recorded yet.</p>
                 <p className="text-xs mt-1">Click "Declare New Harvest" above to register your produce for slot allocation.</p>
               </div>
             )}
@@ -563,8 +552,8 @@ export const FarmerPage: React.FC = () => {
       {/* TAB 3: Eligible Procurement Centres */}
       {activeTab === 'centres' && (
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-emerald-400" /> Nearby Grain & Mandi Procurement Centres
+          <h2 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-[#0d6e48]" /> Nearby Grain & Mandi Procurement Centres
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -573,22 +562,22 @@ export const FarmerPage: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-bold text-slate-100">{c.name}</h3>
-                      <p className="text-xs text-slate-400 font-mono mt-0.5">{c.centreCode}</p>
+                      <h3 className="font-bold text-slate-900 font-serif-header text-base">{c.name}</h3>
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">{c.centreCode}</p>
                     </div>
                     <Badge variant={c.status === 'NORMAL' ? 'success' : c.status === 'BUSY' ? 'warning' : 'danger'}>
                       {c.status}
                     </Badge>
                   </div>
 
-                  <p className="text-xs text-slate-300 flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-slate-500" />
+                  <p className="text-xs text-slate-600 font-medium flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
                     {c.addressText}, {c.district}, {c.state} - {c.pincode}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
+                  <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100 font-medium">
                     <span>Phone: {c.contactPhone || '+91 1800-180-1551'}</span>
-                    <span className="text-emerald-400 font-semibold">Eligible for Slot Booking</span>
+                    <span className="text-[#0d6e48] font-bold">Eligible for Slot Booking</span>
                   </div>
                 </div>
               </Card>
@@ -600,15 +589,15 @@ export const FarmerPage: React.FC = () => {
       {/* TAB 4: Admin Farmer Registry */}
       {activeTab === 'admin' && (
         <div className="space-y-4">
-          <div className="glass-card p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row gap-3 items-center justify-between">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
             <div className="relative w-full md:w-72">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
+              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search name, ref ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-[#0d6e48]"
               />
             </div>
             <div className="flex gap-2 w-full md:w-auto">
@@ -617,15 +606,15 @@ export const FarmerPage: React.FC = () => {
                 placeholder="District filter..."
                 value={districtFilter}
                 onChange={(e) => setDistrictFilter(e.target.value)}
-                className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-[#0d6e48]"
               />
               <Button onClick={handleSearchRegistry}>Search</Button>
             </div>
           </div>
 
-          <div className="glass-card border border-slate-800 rounded-xl overflow-hidden">
+          <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900 text-slate-400 uppercase border-b border-slate-800">
+              <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
                 <tr>
                   <th className="p-3">Farmer Name</th>
                   <th className="p-3">Ref ID</th>
@@ -636,13 +625,13 @@ export const FarmerPage: React.FC = () => {
                   <th className="p-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-slate-200">
+              <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
                 {farmerRegistry.map((f) => (
-                  <tr key={f.id} className="hover:bg-slate-800/40">
-                    <td className="p-3 font-semibold text-slate-100">
+                  <tr key={f.id} className="hover:bg-slate-50/60 transition">
+                    <td className="p-3 font-bold text-slate-900">
                       {f.firstName} {f.lastName}
                     </td>
-                    <td className="p-3 font-mono text-emerald-400">{f.farmerReferenceId}</td>
+                    <td className="p-3 font-mono text-[#0d6e48] font-bold">{f.farmerReferenceId}</td>
                     <td className="p-3">{f.profile?.district || 'Unspecified'}</td>
                     <td className="p-3">{f.profile?.landHoldingAcres || 0} Acres</td>
                     <td className="p-3">
@@ -653,7 +642,7 @@ export const FarmerPage: React.FC = () => {
                       {f.verificationStatus !== 'VERIFIED' && (
                         <button
                           onClick={() => handleVerifyFarmer(f.id, 'VERIFIED')}
-                          className="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30 hover:bg-emerald-500/30"
+                          className="px-2 py-1 bg-[#e6f7ef] text-[#0d6e48] rounded-lg border border-[#b2e8cf] hover:bg-[#d0f2e2] font-bold text-[11px]"
                         >
                           Verify
                         </button>
@@ -661,7 +650,7 @@ export const FarmerPage: React.FC = () => {
                       {f.verificationStatus !== 'REJECTED' && (
                         <button
                           onClick={() => handleVerifyFarmer(f.id, 'REJECTED')}
-                          className="px-2 py-1 bg-rose-500/20 text-rose-300 rounded border border-rose-500/30 hover:bg-rose-500/30"
+                          className="px-2 py-1 bg-rose-50 text-rose-700 rounded-lg border border-rose-200 hover:bg-rose-100 font-bold text-[11px]"
                         >
                           Reject
                         </button>
@@ -678,9 +667,9 @@ export const FarmerPage: React.FC = () => {
       {/* TAB: Digital Token & Live Queue Tracker */}
       {activeTab === 'tokens' && (
         <div className="space-y-6">
-          <div className="glass-card p-6 rounded-2xl border border-slate-800 bg-slate-900/60">
-            <h2 className="text-xl font-bold text-slate-100 mb-1">Your Digital QR Token & Queue Position</h2>
-            <p className="text-sm text-slate-400">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
+            <h2 className="text-xl font-bold font-serif-header text-slate-900 mb-1">Your Digital QR Token & Live Queue Position</h2>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium">
               Present your digital QR code at the procurement centre entry gate for instant check-in.
             </p>
           </div>
@@ -723,21 +712,21 @@ export const FarmerPage: React.FC = () => {
       {activeTab === 'procurements' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <Scale className="w-5 h-5 text-emerald-400" /> My Procurement Records & Payout History
+            <h2 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
+              <Scale className="w-5 h-5 text-[#0d6e48]" /> My Procurement Records & Payout History
             </h2>
             <button
               onClick={loadData}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 rounded-lg border border-slate-700"
+              className="px-3 py-1.5 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 rounded-xl border border-slate-200 shadow-sm"
             >
               🔄 Refresh Status
             </button>
           </div>
 
           {procurementList.length === 0 ? (
-            <div className="glass-card p-8 rounded-2xl border border-slate-800 text-center text-slate-400">
-              <Scale className="w-12 h-12 mx-auto text-slate-600 mb-3" />
-              <p className="font-semibold text-slate-300">No Procurement Records Found</p>
+            <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center text-slate-500 shadow-sm font-medium">
+              <Scale className="w-12 h-12 mx-auto text-slate-400 mb-3" />
+              <p className="font-bold text-slate-900 font-serif-header">No Procurement Records Found</p>
               <p className="text-xs text-slate-500 mt-1">
                 Your procurement records will appear here once your produce is checked in and weighed at the procurement centre.
               </p>

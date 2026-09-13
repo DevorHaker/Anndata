@@ -14,16 +14,16 @@ export const Badge: React.FC<BadgeProps> = ({
   const normalizedVariant = variant === "danger" ? "error" : variant;
 
   const variantStyles = {
-    success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    warning: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    error: "bg-red-500/10 text-red-400 border-red-500/20",
-    info: "bg-sky-500/10 text-sky-400 border-sky-500/20",
-    neutral: "bg-slate-800 text-slate-300 border-slate-700",
+    success: "bg-[#e6f7ef] text-[#0d6e48] border-[#b2e8cf]",
+    warning: "bg-amber-50 text-amber-800 border-amber-200",
+    error: "bg-rose-50 text-rose-700 border-rose-200",
+    info: "bg-blue-50 text-blue-700 border-blue-200",
+    neutral: "bg-slate-100 text-slate-700 border-slate-200",
   };
 
   const sizeStyles = {
-    sm: "px-2 py-0.5 text-xs",
-    md: "px-3 py-1 text-xs font-semibold",
+    sm: "px-2 py-0.5 text-xs font-semibold",
+    md: "px-3 py-1 text-xs font-bold",
   };
 
   return (

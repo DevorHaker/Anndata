@@ -26,14 +26,14 @@ export const HealthPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <Activity className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold font-serif-header text-slate-900 flex items-center gap-2">
+            <Activity className="w-6 h-6 text-[#0d6e48]" />
             System Health & Dependency Readiness
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-500 text-xs sm:text-sm font-medium mt-1">
             Live infrastructure diagnostics verifying PostgreSQL database pool
             and Redis connection.
           </p>
@@ -41,10 +41,10 @@ export const HealthPage: React.FC = () => {
         <button
           onClick={() => refetch()}
           disabled={isLoading || isRefetching}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition border border-slate-700 w-fit"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl transition border border-slate-200 shadow-sm w-fit"
         >
           <RefreshCw
-            className={`w-3.5 h-3.5 ${isRefetching ? "animate-spin" : ""}`}
+            className={`w-3.5 h-3.5 text-[#0d6e48] ${isRefetching ? "animate-spin" : ""}`}
           />
           Refresh Diagnostics
         </button>
@@ -73,7 +73,7 @@ export const HealthPage: React.FC = () => {
           <Card
             header={
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-slate-200">
+                <h2 className="text-base font-bold text-slate-900 font-serif-header">
                   Overall System Readiness
                 </h2>
                 <Badge
@@ -90,7 +90,7 @@ export const HealthPage: React.FC = () => {
               </div>
             }
           >
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-slate-500 font-mono">
               Timestamp: {data.timestamp}
             </p>
           </Card>
@@ -99,8 +99,8 @@ export const HealthPage: React.FC = () => {
             <Card
               header={
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-200 flex items-center gap-2">
-                    <Database className="w-4 h-4 text-sky-400" /> PostgreSQL
+                  <span className="font-bold text-slate-900 flex items-center gap-2 text-sm">
+                    <Database className="w-4 h-4 text-blue-600" /> PostgreSQL
                     Database
                   </span>
                   <Badge
@@ -115,13 +115,13 @@ export const HealthPage: React.FC = () => {
                 </div>
               }
             >
-              <div className="space-y-2 text-xs text-slate-300">
+              <div className="space-y-2 text-xs text-slate-600 font-medium">
                 <p>
-                  <span className="text-slate-500">Latency:</span>{" "}
+                  <span className="text-slate-400">Latency:</span>{" "}
                   {data.dependencies?.postgres?.latencyMs ?? "N/A"} ms
                 </p>
                 <p>
-                  <span className="text-slate-500">Schema:</span> Phase 3 Master
+                  <span className="text-slate-400">Schema:</span> Phase 3 Master
                   Schema Active
                 </p>
               </div>
@@ -130,8 +130,8 @@ export const HealthPage: React.FC = () => {
             <Card
               header={
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-200 flex items-center gap-2">
-                    <Server className="w-4 h-4 text-emerald-400" /> Redis Cache
+                  <span className="font-bold text-slate-900 flex items-center gap-2 text-sm">
+                    <Server className="w-4 h-4 text-[#0d6e48]" /> Redis Cache
                     / Queue
                   </span>
                   <Badge
@@ -146,13 +146,13 @@ export const HealthPage: React.FC = () => {
                 </div>
               }
             >
-              <div className="space-y-2 text-xs text-slate-300">
+              <div className="space-y-2 text-xs text-slate-600 font-medium">
                 <p>
-                  <span className="text-slate-500">Latency:</span>{" "}
+                  <span className="text-slate-400">Latency:</span>{" "}
                   {data.dependencies?.redis?.latencyMs ?? "N/A"} ms
                 </p>
                 <p>
-                  <span className="text-slate-500">Degraded Fallback:</span>{" "}
+                  <span className="text-slate-400">Degraded Fallback:</span>{" "}
                   Enabled
                 </p>
               </div>
