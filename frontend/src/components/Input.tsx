@@ -16,7 +16,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-xs font-semibold text-slate-300 uppercase tracking-wider"
+            className="text-xs font-semibold text-slate-700 uppercase tracking-wider"
           >
             {label}
           </label>
@@ -24,16 +24,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           id={inputId}
-          className={`w-full px-4 py-2.5 bg-slate-900/90 border rounded-xl text-slate-100 text-sm placeholder-slate-500 focus:outline-none transition duration-150 ${
+          className={`w-full px-3 py-2.5 bg-slate-50 border rounded-xl text-slate-900 text-sm font-medium focus:bg-white focus:outline-none transition duration-150 ${
             error
-              ? "border-red-500/80 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-              : "border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+              : "border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
           } ${className}`}
           {...props}
         />
-        {error && <p className="text-xs text-red-400 font-medium">{error}</p>}
+        {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
         {!error && helperText && (
-          <p className="text-xs text-slate-400">{helperText}</p>
+          <p className="text-xs text-slate-500">{helperText}</p>
         )}
       </div>
     );
