@@ -13,6 +13,9 @@ import { AdminPage } from '../pages/AdminPage';
 import { FarmerPaymentsPage } from '../pages/FarmerPaymentsPage';
 import { AdminPaymentsPage } from '../pages/AdminPaymentsPage';
 import { TraceabilityPage } from '../pages/TraceabilityPage';
+import { FarmerIntelligencePage } from '../pages/FarmerIntelligencePage';
+import { StaffIntelligenceDashboardPage } from '../pages/StaffIntelligenceDashboardPage';
+import { AdminIntelligenceControlPage } from '../pages/AdminIntelligenceControlPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { AuthProvider } from '../context/AuthContext';
@@ -102,6 +105,32 @@ export const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute>
                 <TraceabilityPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Phase 11 Real-Time Intelligence & Decision Engine Routes */}
+          <Route
+            path="intelligence/farmer"
+            element={
+              <ProtectedRoute>
+                <FarmerIntelligencePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="intelligence/staff"
+            element={
+              <ProtectedRoute allowedRoles={['PROCUREMENT_OFFICER', 'CENTRE_MANAGER', 'DISTRICT_ADMIN', 'SYSTEM_ADMIN', 'ADMIN']}>
+                <StaffIntelligenceDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="intelligence/admin"
+            element={
+              <ProtectedRoute allowedRoles={['DISTRICT_ADMIN', 'SYSTEM_ADMIN', 'ADMIN']}>
+                <AdminIntelligenceControlPage />
               </ProtectedRoute>
             }
           />

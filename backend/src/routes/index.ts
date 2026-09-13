@@ -16,6 +16,7 @@ import { weighmentsRouter } from './weighments';
 import { qualityRouter } from './quality';
 import { paymentsRouter } from './payments';
 import { traceabilityRouter } from './traceability';
+import { intelligenceRouter } from './intelligence';
 import { createPlaceholderRouter } from './placeholders';
 
 export const v1Router = Router();
@@ -50,6 +51,10 @@ v1Router.use('/quality', qualityRouter);
 // Phase 10 Payment Management & Complete End-to-End Traceability
 v1Router.use('/payments', paymentsRouter);
 v1Router.use('/traceability', traceabilityRouter);
+
+// Phase 11 Real-Time Intelligence, Prediction & Decision Engine
+v1Router.use('/intelligence', intelligenceRouter);
+
 v1Router.use(
   '/notifications',
   createPlaceholderRouter('Multichannel Notification Dispatcher', 'Phase 12')
@@ -57,10 +62,6 @@ v1Router.use(
 v1Router.use(
   '/analytics',
   createPlaceholderRouter('Analytics & Reporting Engine', 'Phase 13')
-);
-v1Router.use(
-  '/intelligence',
-  createPlaceholderRouter('Smart Congestion & Dynamic AI Engine', 'Phase 14')
 );
 v1Router.use(
   '/admin',
