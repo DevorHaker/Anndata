@@ -1,6 +1,5 @@
 import { AuthResponse, User, OtpRequestResponse, UserListResponse, UserStatus, UserRole } from '../types/auth';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+import { API_BASE_URL } from './apiConfig';
 
 class AuthService {
   private getHeaders(token?: string | null): HeadersInit {

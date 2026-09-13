@@ -9,7 +9,7 @@ import {
   DisruptionSeverity
 } from '../types/domain';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+import { API_BASE_URL } from './apiConfig';
 
 class CentreService {
   private getHeaders(): HeadersInit {
