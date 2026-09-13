@@ -10,6 +10,9 @@ import { AdminUsersPage } from '../pages/AdminUsersPage';
 import { FarmerPage } from '../pages/FarmerPage';
 import { CentrePage } from '../pages/CentrePage';
 import { AdminPage } from '../pages/AdminPage';
+import { FarmerPaymentsPage } from '../pages/FarmerPaymentsPage';
+import { AdminPaymentsPage } from '../pages/AdminPaymentsPage';
+import { TraceabilityPage } from '../pages/TraceabilityPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { AuthProvider } from '../context/AuthContext';
@@ -73,6 +76,32 @@ export const AppRouter: React.FC = () => {
             element={
               <ProtectedRoute allowedRoles={['SYSTEM_ADMIN', 'DISTRICT_ADMIN', 'ADMIN']}>
                 <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Phase 10 Payment Management & Traceability Routes */}
+          <Route
+            path="payments"
+            element={
+              <ProtectedRoute>
+                <FarmerPaymentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/payments"
+            element={
+              <ProtectedRoute allowedRoles={['PROCUREMENT_OFFICER', 'CENTRE_MANAGER', 'DISTRICT_ADMIN', 'SYSTEM_ADMIN', 'ADMIN']}>
+                <AdminPaymentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="traceability/:identifier"
+            element={
+              <ProtectedRoute>
+                <TraceabilityPage />
               </ProtectedRoute>
             }
           />

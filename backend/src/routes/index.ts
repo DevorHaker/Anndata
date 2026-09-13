@@ -14,6 +14,8 @@ import { queueRouter } from './queue';
 import { procurementsRouter } from './procurements';
 import { weighmentsRouter } from './weighments';
 import { qualityRouter } from './quality';
+import { paymentsRouter } from './payments';
+import { traceabilityRouter } from './traceability';
 import { createPlaceholderRouter } from './placeholders';
 
 export const v1Router = Router();
@@ -44,10 +46,10 @@ v1Router.use('/queue', queueRouter);
 v1Router.use('/procurements', procurementsRouter);
 v1Router.use('/weighments', weighmentsRouter);
 v1Router.use('/quality', qualityRouter);
-v1Router.use(
-  '/payments',
-  createPlaceholderRouter('DBT Payment Processing', 'Phase 11')
-);
+
+// Phase 10 Payment Management & Complete End-to-End Traceability
+v1Router.use('/payments', paymentsRouter);
+v1Router.use('/traceability', traceabilityRouter);
 v1Router.use(
   '/notifications',
   createPlaceholderRouter('Multichannel Notification Dispatcher', 'Phase 12')

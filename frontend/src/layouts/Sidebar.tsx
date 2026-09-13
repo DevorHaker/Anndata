@@ -10,7 +10,8 @@ import {
   Building2,
   Ticket,
   Calendar,
-  Wheat
+  Wheat,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -35,16 +36,19 @@ export const Sidebar: React.FC = () => {
     if (role === 'FARMER') {
       items.push(
         { to: '/farmer/bookings', label: 'My Slot Bookings', icon: Calendar },
-        { to: '/farmer/tokens', label: 'My Procurement Tokens', icon: Ticket }
+        { to: '/farmer/tokens', label: 'My Procurement Tokens', icon: Ticket },
+        { to: '/payments', label: 'My DBT Payments', icon: CreditCard }
       );
     } else if (role === 'PROCUREMENT_OFFICER' || role === 'CENTRE_MANAGER') {
       items.push(
         { to: '/centre/queue', label: 'Mandi Gate Queue', icon: Building2 },
-        { to: '/centre/checkin', label: 'Gate Token Check-in', icon: Ticket }
+        { to: '/centre/checkin', label: 'Gate Token Check-in', icon: Ticket },
+        { to: '/admin/payments', label: 'DBT Disbursements', icon: CreditCard }
       );
     } else if (role === 'SYSTEM_ADMIN' || role === 'DISTRICT_ADMIN') {
       items.push(
         { to: '/admin/users', label: 'User & RBAC Mgmt', icon: Users },
+        { to: '/admin/payments', label: 'Payment Disbursements', icon: CreditCard },
         { to: '/admin/audit', label: 'Security Audit Logs', icon: ShieldCheck }
       );
     }

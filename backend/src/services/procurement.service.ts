@@ -391,6 +391,14 @@ export class ProcurementService {
 
     const finalizedRecord = await procurementRepository.updateProcurement(record);
 
+    // Automatically trigger Phase 10 Payment Record Creation (non-blocking for session finalization)
+    try {
+      const { paymentService } = await import('./payment.service');
+      await paymentService.createPaymentForProcurement(finalizedRecord.id, `idemp-proc-${finalizedRecord.id}`, officerId);
+    } catch (paymentErr: any) {
+      logger.warn(`Automatic payment creation warning for procurement ${finalizedRecord.id}: ${paymentErr.message}`);
+    }
+
     // Update queue entry state to COMPLETED if present
     if (record.queueEntryId) {
       await queueRepository.atomicCompleteToken(record.queueEntryId, officerId);

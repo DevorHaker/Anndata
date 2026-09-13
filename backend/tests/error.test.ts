@@ -14,11 +14,11 @@ describe("Error Handling Middleware", () => {
   });
 
   it("should return standard 501 response for un-implemented business module endpoints", async () => {
-    const res = await request(app).get("/api/v1/payments");
+    const res = await request(app).get("/api/v1/notifications");
 
     expect(res.status).toBe(501);
     expect(res.body.success).toBe(false);
     expect(res.body.error.code).toBe("NOT_IMPLEMENTED");
-    expect(res.body.error.message).toContain("DBT Payment Processing");
+    expect(res.body.error.message).toContain("Multichannel Notification Dispatcher");
   });
 });
