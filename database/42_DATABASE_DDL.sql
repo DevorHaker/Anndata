@@ -249,7 +249,7 @@ CREATE TABLE centre_supported_crops (
   daily_max_intake_kg NUMERIC(12, 2) NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (centre_id, crop_type_id)
+  CONSTRAINT uq_centre_supported_crop UNIQUE (centre_id, crop_type_id)
 );
 
 CREATE TABLE centre_holidays (
