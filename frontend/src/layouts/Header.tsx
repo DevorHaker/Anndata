@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { AssistedModeToggle } from '../components/AssistedModeToggle';
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -44,7 +43,6 @@ export const Header: React.FC = () => {
           <span>हिन्दी</span>
         </div>
 
-        <AssistedModeToggle />
 
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3 border-l border-slate-200 pl-3">

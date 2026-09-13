@@ -1,11 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Activity,
   User,
   ShieldCheck,
-  Lock,
   Users,
   Building2,
   Ticket,
@@ -22,13 +19,9 @@ export const Sidebar: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
 
   const getRoleNavItems = () => {
-    const items = [
-      { to: '/', label: 'Dashboard Overview', icon: LayoutDashboard, exact: true },
-      { to: '/health', label: 'Health & Readiness', icon: Activity }
-    ];
+    const items: { to: string; label: string; icon: any; exact?: boolean }[] = [];
 
     if (!isAuthenticated || !user) {
-      items.push({ to: '/login', label: 'Sign In / Register', icon: Lock });
       return items;
     }
 
@@ -68,6 +61,10 @@ export const Sidebar: React.FC = () => {
   };
 
   const navItems = getRoleNavItems();
+
+  if (navItems.length === 0) {
+    return null;
+  }
 
   return (
     <aside className="w-64 bg-white/80 backdrop-blur-md border-r border-emerald-100/80 p-4 flex flex-col justify-between hidden md:flex shrink-0">
