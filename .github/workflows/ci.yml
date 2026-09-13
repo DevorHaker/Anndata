@@ -1,0 +1,65 @@
+name: SmartProcure CI Foundation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-and-build:
+    name: Lint, Test & Build Validation
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: smart_procure
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Check Formatting
+        run: npm run format:check
+
+      - name: Run Backend Tests
+        run: npm run test:backend
+        env:
+          DATABASE_URL: postgresql://postgres:postgres_password_dev@localhost:5432/smart_procure
+          REDIS_URL: redis://localhost:6379
+
+      - name: Run Frontend Tests
+        run: npm run test:frontend
+
+      - name: Build Backend & Frontend
+        run: npm run build

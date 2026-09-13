@@ -1,0 +1,31 @@
+{
+  "name": "smart-procure",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SmartProcure — Farm Gate to Payment Procurement Platform (SIH 2026)",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "test": "npm --prefix backend run test && npm --prefix frontend run test",
+    "test:backend": "npm --prefix backend run test",
+    "test:frontend": "npm --prefix frontend run test",
+    "test:e2e": "npx playwright test",
+    "lint": "npm --prefix backend run lint && npm --prefix frontend run lint",
+    "format": "npx prettier --write \"**/*.{js,ts,tsx,json,md,css}\"",
+    "format:check": "npx prettier --check \"**/*.{js,ts,tsx,json,md,css}\"",
+    "db:migrate": "node database/scripts/migrate.js",
+    "db:seed": "node database/scripts/seed.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
+    "pg": "^8.11.3",
+    "prettier": "^3.2.5"
+  }
+}
