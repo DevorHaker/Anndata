@@ -17,6 +17,8 @@ import { qualityRouter } from './quality';
 import { paymentsRouter } from './payments';
 import { traceabilityRouter } from './traceability';
 import { intelligenceRouter } from './intelligence';
+import { notificationsRouter } from './notifications';
+import { syncRouter } from './sync';
 import { createPlaceholderRouter } from './placeholders';
 
 export const v1Router = Router();
@@ -55,10 +57,9 @@ v1Router.use('/traceability', traceabilityRouter);
 // Phase 11 Real-Time Intelligence, Prediction & Decision Engine
 v1Router.use('/intelligence', intelligenceRouter);
 
-v1Router.use(
-  '/notifications',
-  createPlaceholderRouter('Multichannel Notification Dispatcher', 'Phase 12')
-);
+// Phase 12 Reliable Farmer Communication, Offline Operations & Multilingual Access
+v1Router.use('/notifications', notificationsRouter);
+v1Router.use('/sync', syncRouter);
 v1Router.use(
   '/analytics',
   createPlaceholderRouter('Analytics & Reporting Engine', 'Phase 13')

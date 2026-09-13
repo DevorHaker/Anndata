@@ -10,9 +10,11 @@ import {
   Building2,
   Ticket,
   Calendar,
-  Wheat,
   CreditCard,
-  Sparkles
+  Sparkles,
+  Bell,
+  WifiOff,
+  GitCompare
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -31,6 +33,7 @@ export const Sidebar: React.FC = () => {
     }
 
     items.push({ to: '/profile', label: 'My Account Profile', icon: User });
+    items.push({ to: '/notifications', label: 'Notifications Inbox', icon: Bell });
 
     const role = user.role === 'ADMIN' ? 'SYSTEM_ADMIN' : user.role;
 
@@ -44,6 +47,8 @@ export const Sidebar: React.FC = () => {
     } else if (role === 'PROCUREMENT_OFFICER' || role === 'CENTRE_MANAGER') {
       items.push(
         { to: '/intelligence/staff', label: 'Operations & AI Control', icon: Sparkles },
+        { to: '/centre/offline', label: 'Offline Mandi Ops', icon: WifiOff },
+        { to: '/admin/sync-conflicts', label: 'Sync Conflicts', icon: GitCompare },
         { to: '/centre/queue', label: 'Mandi Gate Queue', icon: Building2 },
         { to: '/centre/checkin', label: 'Gate Token Check-in', icon: Ticket },
         { to: '/admin/payments', label: 'DBT Disbursements', icon: CreditCard }
@@ -51,6 +56,8 @@ export const Sidebar: React.FC = () => {
     } else if (role === 'SYSTEM_ADMIN' || role === 'DISTRICT_ADMIN') {
       items.push(
         { to: '/intelligence/admin', label: 'What-If & AI Engine', icon: Sparkles },
+        { to: '/admin/sync-conflicts', label: 'Sync Conflicts', icon: GitCompare },
+        { to: '/centre/offline', label: 'Offline Mandi Ops', icon: WifiOff },
         { to: '/admin/users', label: 'User & RBAC Mgmt', icon: Users },
         { to: '/admin/payments', label: 'Payment Disbursements', icon: CreditCard },
         { to: '/admin/audit', label: 'Security Audit Logs', icon: ShieldCheck }
