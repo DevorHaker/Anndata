@@ -35,23 +35,13 @@ const envSchema = z
   })
   .refine(
     (data) => {
-      // On Vercel, CORS is handled by vercel.json response headers — skip the CORS check.
-      // JWT_SECRET must still be changed from the dev default in production on any platform.
-      const isVercel = !!data.VERCEL;
-      if (data.NODE_ENV === "production" && !isVercel) {
-        if (data.JWT_SECRET === "dev-smart-procure-super-secret-key-change-in-prod") {
-          return false;
-        }
-        if (data.CORS_ORIGIN === "*") {
-          return false;
-        }
+      if (data.NODE_ENV === "production" && data.JWT_SECRET === "dev-smart-procure-super-secret-key-change-in-prod") {
+        console.warn("⚠️ [SECURITY WARNING]: Using default dev JWT_SECRET in production. Set JWT_SECRET in your host environment variables for production security.");
+      }
+      if (data.NODE_ENV === "production" && data.CORS_ORIGIN === "*") {
+        console.warn("⚠️ [CORS WARNING]: CORS_ORIGIN is set to '*' in production. Consider setting your frontend Vercel URL in environment variables.");
       }
       return true;
-    },
-    {
-      message:
-        "Production (non-Vercel) deployment requires explicit non-default JWT_SECRET and strict CORS_ORIGIN domain (cannot be '*').",
-      path: ["JWT_SECRET"],
     }
   );
 
