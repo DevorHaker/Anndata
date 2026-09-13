@@ -70,10 +70,10 @@ export const Sidebar: React.FC = () => {
   const navItems = getRoleNavItems();
 
   return (
-    <aside className="w-64 glass-panel border-r border-slate-800 p-4 flex flex-col justify-between hidden md:flex shrink-0">
+    <aside className="w-64 bg-white/80 backdrop-blur-md border-r border-emerald-100/80 p-4 flex flex-col justify-between hidden md:flex shrink-0">
       <div className="space-y-6">
         <div>
-          <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+          <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
             Navigation Menu
           </p>
           <nav className="space-y-1">
@@ -85,10 +85,10 @@ export const Sidebar: React.FC = () => {
                   to={item.to}
                   end={item.exact}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition duration-150 ${
+                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition duration-150 ${
                       isActive
-                        ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'
-                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                        ? 'bg-[#e6f7ef] text-[#0d6e48] border border-[#b2e8cf]'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`
                   }
                 >
@@ -101,16 +101,16 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      <div className="p-3 glass-card rounded-xl border border-slate-800 text-xs text-slate-400">
-        <p className="font-semibold text-slate-300 mb-1 flex items-center justify-between">
-          <span>Phase 5 Active</span>
+      <div className="p-3 bg-[#e6f7ef]/50 rounded-2xl border border-[#b2e8cf]/60 text-xs text-slate-600">
+        <p className="font-semibold text-slate-900 mb-1 flex items-center justify-between">
+          <span>SIH 2026 Active</span>
           {user && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-mono rounded">
+            <span className="text-[10px] px-1.5 py-0.5 bg-[#0d6e48] text-white font-mono rounded-md font-bold">
               {user.role}
             </span>
           )}
         </p>
-        <p className="leading-relaxed text-[11px]">
+        <p className="leading-relaxed text-[11px] text-slate-500">
           {isAuthenticated ? `Signed in as ${user?.mobileNumber}` : 'Unauthenticated Mode'}
         </p>
       </div>
