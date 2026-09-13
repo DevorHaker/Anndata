@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Authoritative Relational Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart_procure_prod_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-smart_procure}
+      POSTGRES_USER: ${POSTGRES_USER:-smart_procure_app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_prod_password_change_me}
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    networks:
+      - backend_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-smart_procure_app} -d ${POSTGRES_DB:-smart_procure}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis In-Memory State & Cache
+  redis:
+    image: redis:7-alpine
+    container_name: smart_procure_prod_redis
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_prod_password_change_me}
+    volumes:
+      - redisdata_prod:/data
+    networks:
+      - backend_internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 3. Backend Express API Node Instance
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart_procure_prod_backend
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      API_PREFIX: /api/v1
+      DATABASE_URL: postgresql://${POSTGRES_USER:-smart_procure_app}:${POSTGRES_PASSWORD:-secure_prod_password_change_me}@postgres:5432/${POSTGRES_DB:-smart_procure}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_prod_password_change_me}@redis:6379
+      JWT_SECRET: ${JWT_SECRET:-super_secure_production_jwt_secret_key_2026}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://smartprocure.example.org}
+      LOG_LEVEL: info
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend_internal
+      - frontend_public
+
+  # 4. Frontend Nginx Static & SPA Web Server
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smart_procure_prod_frontend
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - frontend_public
+
+networks:
+  backend_internal:
+    internal: true
+  frontend_public:
+    driver: bridge
+
+volumes:
+  pgdata_prod:
+  redisdata_prod:

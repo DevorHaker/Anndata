@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart_procure_staging_db
+    restart: always
+    environment:
+      POSTGRES_DB: smart_procure_staging
+      POSTGRES_USER: smart_procure_staging_user
+      POSTGRES_PASSWORD: staging_password_123
+    volumes:
+      - pgdata_staging:/var/lib/postgresql/data
+    networks:
+      - staging_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smart_procure_staging_user -d smart_procure_staging"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: smart_procure_staging_redis
+    restart: always
+    networks:
+      - staging_internal
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart_procure_staging_backend
+    restart: always
+    environment:
+      NODE_ENV: staging
+      PORT: 5000
+      DATABASE_URL: postgresql://smart_procure_staging_user:staging_password_123@postgres:5432/smart_procure_staging
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: staging_jwt_secret_key_testing_only
+      CORS_ORIGIN: http://localhost:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - staging_internal
+      - staging_public
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smart_procure_staging_frontend
+    restart: always
+    ports:
+      - "8080:80"
+    networks:
+      - staging_public
+
+networks:
+  staging_internal:
+    internal: true
+  staging_public:
+    driver: bridge
+
+volumes:
+  pgdata_staging:
