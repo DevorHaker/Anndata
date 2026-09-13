@@ -2,14 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
-
-
+  const { language, setLanguage } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-emerald-100/80 px-4 md:px-8 py-3 text-slate-800 flex items-center justify-between shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-emerald-100/80 px-4 md:px-8 py-3 text-slate-800 flex items-center justify-between shadow-sm font-sans">
       {/* Brand Section */}
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center gap-3 group">
@@ -27,8 +27,6 @@ export const Header: React.FC = () => {
         </Link>
       </div>
 
-
-
       {/* Action Badges & Buttons */}
       <div className="flex items-center gap-3">
         {/* Status Pill */}
@@ -37,12 +35,15 @@ export const Header: React.FC = () => {
           <span>Online</span>
         </div>
 
-        {/* Language Selector */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1 bg-slate-50 text-slate-700 text-xs font-medium rounded-full border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
-          <Globe className="w-3.5 h-3.5 text-slate-500" />
-          <span>हिन्दी</span>
-        </div>
-
+        {/* Interactive Language Selector */}
+        <button
+          onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-full border border-slate-200 transition-colors shadow-sm"
+          title="Switch Language / भाषा बदलें"
+        >
+          <Globe className="w-3.5 h-3.5 text-[#0d6e48]" />
+          <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+        </button>
 
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3 border-l border-slate-200 pl-3">

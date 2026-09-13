@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Language, translations } from './translations';
+import { LanguageSelectionModal } from '../components/LanguageSelectionModal';
 
 interface LanguageContextType {
   language: Language;
@@ -49,6 +50,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, isAssistedMode, toggleAssistedMode }}>
+      <LanguageSelectionModal />
       <div className={isAssistedMode ? 'assisted-mode-high-visibility' : ''}>
         {children}
       </div>
