@@ -37,12 +37,14 @@ SmartProcure is pre-configured for seamless deployment to **Vercel** as a full-s
 1. Push your repository to **GitHub**.
 2. Go to [Vercel Dashboard](https://vercel.com/new) and click **Add New Project**.
 3. Import your **SmartProcure** repository.
-4. Vercel automatically detects the configuration from `vercel.json`:
-   - **Framework Preset**: Vite / Other
-   - **Root Directory**: `./`
-   - **Build Command**: `npm --prefix frontend run build`
-   - **Output Directory**: `frontend/dist`
-   - **Install Command**: `npm install`
+4. **Important**: Verify the **Root Directory** setting:
+   - **Full-Stack Deployment (Recommended)**:
+     - Ensure **Root Directory** is set to `./` (the repository root, **NOT** `frontend`). If Vercel auto-detected `frontend`, click **Edit** and set it to `./`.
+     - Leave **Build and Output Settings** toggled **OFF** (Vercel will automatically read `vercel.json`).
+   - **Frontend-Only Deployment**:
+     - If you only want to host the frontend on Vercel and run your backend on Render/Railway, set **Root Directory** to `frontend`.
+     - Set **Build Command** to `npm run build` (do **NOT** use `npm --prefix frontend`).
+     - Set **Output Directory** to `dist`.
 5. Configure Environment Variables (see section below).
 6. Click **Deploy**.
 
@@ -95,3 +97,16 @@ This starts the Vercel development server on `http://localhost:3000` with server
 - Requests to `/api/*` are routed to `api/index.ts` (Vercel Serverless Function) via `vercel.json` rewrites.
 - Frontend static assets (`/assets/*`) are served with immutable caching headers.
 - All non-API SPA routes (`/`, `/login`, `/dashboard`, etc.) rewrite to `frontend/dist/index.html`.
+
+---
+
+## 🛠️ Troubleshooting
+
+### Error: `ENOENT: no such file or directory, open '/vercel/path0/frontend/frontend/package.json'`
+
+- **Why it happened**: In Vercel Project Settings, **Root Directory** was set to `frontend` while the **Build Command** was set to `npm --prefix frontend run build`. Because Vercel was already inside `frontend/`, npm tried to find a subfolder named `frontend/frontend`.
+- **How to fix**:
+  1. Go to your **Vercel Dashboard** -> select your project -> **Settings** -> **General**.
+  2. Under **Root Directory**, click **Edit** and change it to `./` (the repository root).
+  3. Under **Build & Development Settings**, turn **OFF** all overrides so it uses `vercel.json` defaults.
+  4. Go to the **Deployments** tab, click the three dots on the latest deployment, and click **Redeploy**.
