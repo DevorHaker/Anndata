@@ -3,9 +3,8 @@ services:
     name: smart-procure-backend
     env: node
     plan: free
-    rootDir: backend
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    startCommand: npm --prefix backend start
     healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
