@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface QualityInspectionFormProps {
   procurementId: string;
@@ -70,64 +70,64 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl text-slate-100">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+    <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm font-sans">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
         <div>
-          <h3 className="text-lg font-bold flex items-center gap-2 text-cyan-400">
+          <h3 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
             <span>🔬</span> Dynamic Quality Inspection Engine
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
             Govt KMS Specs: Max Moisture 14% (Deduction above 12%), Foreign Matter max 2.0%
           </p>
         </div>
-        <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-semibold rounded-full">
+        <span className="px-3 py-1 bg-[#e6f7ef] text-[#0d6e48] border border-[#b2e8cf] text-xs font-bold rounded-full">
           VERSION 2026-KMS-01
         </span>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs font-medium">
+        <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs font-bold">
           ⚠️ {error}
         </div>
       )}
 
       {/* Dynamic Quality Result Live Card */}
       <div
-        className={`mb-6 p-4 rounded-xl border ${
+        className={`mb-6 p-5 rounded-2xl border ${
           preview.status === 'REJECTED'
-            ? 'bg-rose-950/40 border-rose-800/60 text-rose-300'
+            ? 'bg-rose-50 border-rose-200 text-rose-900'
             : preview.status === 'PASSED_WITH_DEDUCTION'
-            ? 'bg-amber-950/40 border-amber-800/60 text-amber-300'
-            : 'bg-emerald-950/40 border-emerald-800/60 text-emerald-300'
+            ? 'bg-amber-50 border-amber-200 text-amber-900'
+            : 'bg-[#e6f7ef] border-[#b2e8cf] text-[#0d6e48]'
         }`}
       >
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs uppercase font-semibold text-slate-400">Evaluation Outcome</span>
-            <div className="text-xl font-bold flex items-center gap-2 mt-0.5">
+            <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">Evaluation Outcome</span>
+            <div className="text-lg font-bold font-serif-header flex items-center gap-2 mt-0.5">
               <span>{preview.status === 'REJECTED' ? '❌ REJECTED' : preview.status === 'PASSED_WITH_DEDUCTION' ? '⚠️ PASSED WITH DEDUCTION' : '✅ PASSED (GRADE A)'}</span>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-xs uppercase font-semibold text-slate-400">Quality Grade</span>
-            <div className="text-lg font-mono font-bold">{preview.grade}</div>
+            <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">Quality Grade</span>
+            <div className="text-base font-mono font-bold">{preview.grade}</div>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-800/60 text-center text-xs">
+        <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-200/80 text-center text-xs font-medium">
           <div>
-            <span className="text-slate-400">Measured Net Weight:</span>
-            <div className="font-mono font-semibold text-slate-200 mt-0.5">{measuredNetKg} KG</div>
+            <span className="text-slate-500">Measured Net Weight:</span>
+            <div className="font-mono font-bold text-slate-900 mt-0.5">{measuredNetKg} KG</div>
           </div>
           <div>
-            <span className="text-slate-400">Calculated Deduction:</span>
-            <div className="font-mono font-semibold text-amber-400 mt-0.5">
+            <span className="text-slate-500">Calculated Deduction:</span>
+            <div className="font-mono font-bold text-amber-700 mt-0.5">
               -{preview.deductionKg} KG ({preview.deductionPct}%)
             </div>
           </div>
           <div>
-            <span className="text-slate-400">Final Accepted Weight:</span>
-            <div className="font-mono font-semibold text-emerald-400 mt-0.5">{preview.acceptedKg} KG</div>
+            <span className="text-slate-500">Final Accepted Weight:</span>
+            <div className="font-mono font-bold text-[#0d6e48] mt-0.5">{preview.acceptedKg} KG</div>
           </div>
         </div>
       </div>
@@ -136,10 +136,10 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
         {/* Moisture Slider + Input */}
         <div>
           <div className="flex justify-between items-center mb-1">
-            <label className="text-xs font-medium text-slate-300">
-              Moisture Content (%) <span className="text-cyan-400">*</span>
+            <label className="text-xs font-bold text-slate-700">
+              Moisture Content (%) <span className="text-[#0d6e48]">*</span>
             </label>
-            <span className={`text-xs font-mono font-bold ${moisture > 14 ? 'text-red-400' : moisture > 12 ? 'text-amber-400' : 'text-emerald-400'}`}>
+            <span className={`text-xs font-mono font-bold ${moisture > 14 ? 'text-rose-600' : moisture > 12 ? 'text-amber-700' : 'text-[#0d6e48]'}`}>
               {moisture}% {moisture > 14 ? '(REJECT (>14%))' : moisture > 12 ? `(${moisture - 12}% deduction)` : '(Optimal)'}
             </span>
           </div>
@@ -151,7 +151,7 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
             value={moisture}
             onChange={(e) => setMoisture(parseFloat(e.target.value))}
             disabled={disabled || submitting}
-            className="w-full accent-cyan-500 bg-slate-950"
+            className="w-full accent-[#0d6e48] bg-slate-100"
           />
           <div className="flex justify-between text-[10px] text-slate-500 mt-0.5 font-mono">
             <span>8%</span>
@@ -164,8 +164,8 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
         {/* Foreign Matter & Damaged Grains */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              Foreign Matter (%) <span className="text-cyan-400">*</span> (Max 2.0%)
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Foreign Matter (%) <span className="text-[#0d6e48]">*</span> (Max 2.0%)
             </label>
             <input
               type="number"
@@ -174,13 +174,13 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
               onChange={(e) => setForeignMatter(parseFloat(e.target.value) || 0)}
               disabled={disabled || submitting}
               placeholder="e.g. 0.5"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-100 focus:outline-none focus:border-cyan-500 disabled:opacity-50"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 font-bold focus:bg-white focus:outline-none focus:border-[#0d6e48] disabled:opacity-50"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              Damaged Grains (%) <span className="text-cyan-400">*</span> (Max 4.0%)
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Damaged Grains (%) <span className="text-[#0d6e48]">*</span> (Max 4.0%)
             </label>
             <input
               type="number"
@@ -189,7 +189,7 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
               onChange={(e) => setDamagedGrains(parseFloat(e.target.value) || 0)}
               disabled={disabled || submitting}
               placeholder="e.g. 1.0"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-100 focus:outline-none focus:border-cyan-500 disabled:opacity-50"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 font-bold focus:bg-white focus:outline-none focus:border-[#0d6e48] disabled:opacity-50"
             />
           </div>
         </div>
@@ -198,7 +198,7 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-lg shadow-cyan-900/20 disabled:opacity-50"
+            className="w-full bg-[#0d6e48] hover:bg-[#095235] text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs shadow-md disabled:opacity-50"
           >
             {submitting ? (
               <>
@@ -207,7 +207,7 @@ export const QualityInspectionForm: React.FC<QualityInspectionFormProps> = ({
               </>
             ) : (
               <>
-                <span>🔬</span> Submit Quality Inspection & Calculate Deductions
+                <span>🔬</span> Submit Quality Inspection &amp; Calculate Deductions
               </>
             )}
           </button>

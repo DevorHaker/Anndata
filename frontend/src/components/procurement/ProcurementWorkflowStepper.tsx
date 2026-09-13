@@ -137,15 +137,15 @@ export const ProcurementWorkflowStepper: React.FC<ProcurementWorkflowStepperProp
   ];
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur font-sans">
+    <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm font-sans">
       {/* Header Stepper Bar */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+          <h2 className="text-xl font-bold font-serif-header text-slate-900 flex items-center gap-2">
             <span>🚜</span> Procurement Operations Workflow Stepper
           </h2>
           {procurement && (
-            <span className="text-xs font-mono px-3 py-1 bg-slate-800 text-emerald-400 border border-slate-700 rounded-full font-semibold">
+            <span className="text-xs font-mono px-3 py-1 bg-[#e6f7ef] text-[#0d6e48] border border-[#b2e8cf] rounded-full font-bold">
               REF: {procurement.procurementReferenceId}
             </span>
           )}
@@ -153,7 +153,7 @@ export const ProcurementWorkflowStepper: React.FC<ProcurementWorkflowStepperProp
 
         {/* Stepper Dots & Line */}
         <div className="relative flex items-center justify-between">
-          <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-slate-800 -z-0" />
+          <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-slate-200 -z-0" />
           {steps.map((s) => {
             const isPassed = currentStep > s.num;
             const isCurrent = currentStep === s.num;
@@ -162,15 +162,15 @@ export const ProcurementWorkflowStepper: React.FC<ProcurementWorkflowStepperProp
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-mono transition-all ${
                     isPassed
-                      ? 'bg-emerald-500 text-slate-950 font-black'
+                      ? 'bg-[#0d6e48] text-white font-black'
                       : isCurrent
-                      ? 'bg-emerald-600 text-white ring-4 ring-emerald-500/20'
-                      : 'bg-slate-800 text-slate-400 border border-slate-700'
+                      ? 'bg-[#0d6e48] text-white ring-4 ring-[#b2e8cf]'
+                      : 'bg-slate-100 text-slate-500 border border-slate-200'
                   }`}
                 >
                   {isPassed ? '✓' : s.num}
                 </div>
-                <span className={`text-[11px] font-medium mt-1 hidden sm:block ${isCurrent ? 'text-emerald-400 font-semibold' : 'text-slate-500'}`}>
+                <span className={`text-[11px] font-bold mt-1.5 hidden sm:block ${isCurrent ? 'text-[#0d6e48]' : 'text-slate-500'}`}>
                   {s.label}
                 </span>
               </div>
@@ -180,22 +180,22 @@ export const ProcurementWorkflowStepper: React.FC<ProcurementWorkflowStepperProp
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm font-medium flex items-center gap-2">
+        <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-xs font-bold flex items-center gap-2">
           <span>⚠️</span> {error}
         </div>
       )}
 
       {/* STEP 1: Session Start */}
       {currentStep === 1 && (
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800">
-          <h3 className="text-base font-bold text-slate-200 mb-2">Step 1: Initiate Procurement Session</h3>
-          <p className="text-xs text-slate-400 mb-4">
+        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+          <h3 className="text-base font-bold font-serif-header text-slate-900 mb-1">Step 1: Initiate Procurement Session</h3>
+          <p className="text-xs text-slate-500 font-medium mb-4">
             Select or enter checked-in farmer booking reference ID to initiate state machine tracking.
           </p>
 
           <form onSubmit={handleStartSession} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                 Booking Reference ID / Token Code
               </label>
               <input
@@ -203,14 +203,14 @@ export const ProcurementWorkflowStepper: React.FC<ProcurementWorkflowStepperProp
                 value={bookingId}
                 onChange={(e) => setBookingId(e.target.value)}
                 placeholder="e.g. bk-p9-test-001 or BK-2026-001"
-                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-100 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-900 font-bold focus:outline-none focus:border-[#0d6e48]"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
+              className="w-full bg-[#0d6e48] hover:bg-[#095235] text-white font-bold py-2.5 px-4 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2"
             >
               {loading ? 'Initiating Session...' : 'Start Session'}
             </button>
@@ -220,27 +220,27 @@ export const ProcurementWorkflowStepper: React.FC<ProcurementWorkflowStepperProp
 
       {/* STEP 2: Intake Confirmation */}
       {currentStep === 2 && procurement && (
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
-          <h3 className="text-base font-bold text-slate-200">Step 2: Produce Intake Receipt Confirmation</h3>
-          <p className="text-xs text-slate-400">
+        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
+          <h3 className="text-base font-bold font-serif-header text-slate-900">Step 2: Produce Intake Receipt Confirmation</h3>
+          <p className="text-xs text-slate-500 font-medium">
             Confirm physical produce arrival at the procurement yard entrance.
           </p>
 
-          <div className="grid grid-cols-2 gap-4 bg-slate-900 p-4 rounded-lg border border-slate-800 text-sm">
+          <div className="grid grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-slate-200 text-xs">
             <div>
-              <span className="text-xs text-slate-400 block">Farmer ID</span>
-              <span className="font-mono text-slate-200 font-semibold">{procurement.farmerId}</span>
+              <span className="text-slate-500 font-medium block">Farmer ID</span>
+              <span className="font-mono text-slate-900 font-bold">{procurement.farmerId}</span>
             </div>
             <div>
-              <span className="text-xs text-slate-400 block">Declared Produce Weight</span>
-              <span className="font-mono text-emerald-400 font-semibold">{procurement.declaredQuantityKg} KG</span>
+              <span className="text-slate-500 font-medium block">Declared Produce Weight</span>
+              <span className="font-mono text-[#0d6e48] font-bold">{procurement.declaredQuantityKg} KG</span>
             </div>
           </div>
 
           <button
             onClick={handleConfirmIntake}
             disabled={loading}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm"
+            className="w-full bg-[#0d6e48] hover:bg-[#095235] text-white font-bold py-2.5 px-4 rounded-xl transition text-xs shadow-md"
           >
             {loading ? 'Confirming Intake...' : 'Confirm Produce Intake & Proceed to Weighbridge'}
           </button>
@@ -268,31 +268,31 @@ export const ProcurementWorkflowStepper: React.FC<ProcurementWorkflowStepperProp
 
       {/* STEP 5: Quality Review */}
       {currentStep === 5 && procurement && (
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
-          <h3 className="text-base font-bold text-slate-200">Step 5: Quality Inspection Decision Review</h3>
-          <div className="p-4 bg-slate-900 rounded-lg border border-slate-800 space-y-2 text-sm">
+        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
+          <h3 className="text-base font-bold font-serif-header text-slate-900">Step 5: Quality Inspection Decision Review</h3>
+          <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-2 text-xs font-medium">
             <div className="flex justify-between">
-              <span className="text-slate-400">Quality Decision:</span>
-              <span className="font-bold text-cyan-400">{procurement.qualityStatus} ({procurement.qualityGrade})</span>
+              <span className="text-slate-500">Quality Decision:</span>
+              <span className="font-bold text-teal-700">{procurement.qualityStatus} ({procurement.qualityGrade})</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Measured Weight:</span>
-              <span className="font-mono text-slate-200">{procurement.measuredNetWeightKg} KG</span>
+              <span className="text-slate-500">Measured Weight:</span>
+              <span className="font-mono text-slate-900 font-bold">{procurement.measuredNetWeightKg} KG</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">Quality Deduction:</span>
-              <span className="font-mono text-amber-400">-{procurement.qualityDeductionKg} KG</span>
+              <span className="text-slate-500">Quality Deduction:</span>
+              <span className="font-mono text-amber-700 font-bold">-{procurement.qualityDeductionKg} KG</span>
             </div>
-            <div className="flex justify-between border-t border-slate-800 pt-2 font-bold">
-              <span className="text-slate-200">Final Accepted Weight:</span>
-              <span className="font-mono text-emerald-400">{procurement.finalAcceptedWeightKg} KG</span>
+            <div className="flex justify-between border-t border-slate-200 pt-2 font-bold text-slate-900">
+              <span>Final Accepted Weight:</span>
+              <span className="font-mono text-[#0d6e48] text-sm">{procurement.finalAcceptedWeightKg} KG</span>
             </div>
           </div>
 
           <button
             onClick={handleCalculateValue}
             disabled={loading}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm"
+            className="w-full bg-[#0d6e48] hover:bg-[#095235] text-white font-bold py-2.5 px-4 rounded-xl transition text-xs shadow-md"
           >
             {loading ? 'Calculating MSP Rates...' : 'Calculate MSP Rate & Financial Payable Amount'}
           </button>

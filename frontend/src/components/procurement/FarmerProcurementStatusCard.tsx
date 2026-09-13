@@ -9,61 +9,61 @@ export const FarmerProcurementStatusCard: React.FC<FarmerProcurementStatusCardPr
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold rounded-full">COMPLETED (PAYMENT READY)</span>;
+        return <span className="px-3 py-1 bg-[#e6f7ef] text-[#0d6e48] border border-[#b2e8cf] text-xs font-bold rounded-full">COMPLETED (PAYMENT READY)</span>;
       case 'REJECTED':
-        return <span className="px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-semibold rounded-full">REJECTED</span>;
+        return <span className="px-3 py-1 bg-rose-50 text-rose-800 border border-rose-200 text-xs font-bold rounded-full">REJECTED</span>;
       case 'PARTIALLY_ACCEPTED':
       case 'ACCEPTED':
       case 'UNDER_REVIEW':
-        return <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-semibold rounded-full">INSPECTION ACCEPTED</span>;
+        return <span className="px-3 py-1 bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold rounded-full">INSPECTION ACCEPTED</span>;
       case 'WEIGHING':
-        return <span className="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-full">AT WEIGHBRIDGE</span>;
+        return <span className="px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold rounded-full">AT WEIGHBRIDGE</span>;
       default:
-        return <span className="px-3 py-1 bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold rounded-full">{status}</span>;
+        return <span className="px-3 py-1 bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold rounded-full">{status}</span>;
     }
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg text-slate-100 mb-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 mb-4 gap-2">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm text-slate-900 mb-4 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-slate-200 font-mono">
+            <span className="text-sm font-bold text-slate-900 font-mono">
               {procurement.procurementReferenceId}
             </span>
             {procurement.tokenCode && (
-              <span className="text-xs px-2 py-0.5 bg-slate-800 text-slate-300 rounded font-mono">
+              <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-700 rounded font-mono font-bold">
                 {procurement.tokenCode}
               </span>
             )}
           </div>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-500 font-medium">
             Started: {new Date(procurement.startedAt).toLocaleString()}
           </span>
         </div>
         <div>{getStatusBadge(procurement.status)}</div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950 p-3 rounded-lg border border-slate-800 text-center mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 text-center mb-4 font-medium">
         <div>
-          <span className="text-[10px] uppercase font-semibold text-slate-400 block">Declared Weight</span>
-          <span className="text-sm font-mono font-bold text-slate-200">{procurement.declaredQuantityKg} KG</span>
+          <span className="text-[10px] uppercase font-bold text-slate-400 block">Declared Weight</span>
+          <span className="text-sm font-mono font-bold text-slate-900">{procurement.declaredQuantityKg} KG</span>
         </div>
         <div>
-          <span className="text-[10px] uppercase font-semibold text-slate-400 block">Measured Net</span>
-          <span className="text-sm font-mono font-bold text-amber-400">
+          <span className="text-[10px] uppercase font-bold text-slate-400 block">Measured Net</span>
+          <span className="text-sm font-mono font-bold text-amber-700">
             {procurement.measuredNetWeightKg ? `${procurement.measuredNetWeightKg} KG` : 'Pending'}
           </span>
         </div>
         <div>
-          <span className="text-[10px] uppercase font-semibold text-slate-400 block">Quality Grade</span>
-          <span className="text-sm font-mono font-bold text-cyan-400">
+          <span className="text-[10px] uppercase font-bold text-slate-400 block">Quality Grade</span>
+          <span className="text-sm font-mono font-bold text-teal-700">
             {procurement.qualityGrade || 'Pending'}
           </span>
         </div>
         <div>
-          <span className="text-[10px] uppercase font-semibold text-slate-400 block">Final Accepted</span>
-          <span className="text-sm font-mono font-bold text-emerald-400">
+          <span className="text-[10px] uppercase font-bold text-slate-400 block">Final Accepted</span>
+          <span className="text-sm font-mono font-bold text-[#0d6e48]">
             {procurement.finalAcceptedWeightKg ? `${procurement.finalAcceptedWeightKg} KG` : 'Pending'}
           </span>
         </div>
@@ -71,17 +71,17 @@ export const FarmerProcurementStatusCard: React.FC<FarmerProcurementStatusCardPr
 
       {/* Financial Payout Summary */}
       {procurement.netPayableAmount > 0 && (
-        <div className="flex items-center justify-between bg-emerald-950/30 border border-emerald-800/40 p-3 rounded-lg">
+        <div className="flex items-center justify-between bg-[#e6f7ef] border border-[#b2e8cf] p-3.5 rounded-xl">
           <div>
-            <span className="text-xs text-emerald-400 font-semibold block">Net Payable Amount (MSP ₹{procurement.ratePerQuintal}/q)</span>
+            <span className="text-xs text-[#0d6e48] font-bold block">Net Payable Amount (MSP ₹{procurement.ratePerQuintal}/q)</span>
             {procurement.qualityDeductionKg > 0 && (
-              <span className="text-[11px] text-amber-400">
+              <span className="text-[11px] text-amber-700 font-semibold">
                 (Reflects {procurement.qualityDeductionKg} KG quality deduction)
               </span>
             )}
           </div>
           <div className="text-right">
-            <span className="text-lg font-mono font-bold text-emerald-400">
+            <span className="text-lg font-mono font-bold text-[#0d6e48]">
               ₹{procurement.netPayableAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </span>
           </div>

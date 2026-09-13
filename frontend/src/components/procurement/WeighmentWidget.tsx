@@ -75,21 +75,21 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl text-slate-100">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+    <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm font-sans">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
         <div>
-          <h3 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
+          <h3 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
             <span>⚖️</span> Weighbridge Scale Operations
           </h3>
-          <p className="text-xs text-slate-400">Record digital tare & gross weight measurements</p>
+          <p className="text-xs text-slate-500 font-medium mt-0.5">Record digital tare &amp; gross weight measurements</p>
         </div>
-        <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold rounded-full">
+        <span className="px-3 py-1 bg-[#e6f7ef] text-[#0d6e48] border border-[#b2e8cf] text-xs font-bold rounded-full">
           OPERATIONAL
         </span>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs font-medium">
+        <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs font-bold">
           ⚠️ {error}
         </div>
       )}
@@ -97,14 +97,14 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">
+            <label className="block text-xs font-bold text-slate-700 mb-1">
               Select Weighbridge Scale Unit
             </label>
             <select
               value={equipmentId}
               onChange={(e) => setEquipmentId(e.target.value)}
               disabled={disabled || submitting}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-[#0d6e48] disabled:opacity-50"
             >
               <option value="eq-wb-001">Pitless Electronic Scale 01 (Operational - Calibrated)</option>
               <option value="eq-wb-002">Pitless Electronic Scale 02 (Operational - Calibrated)</option>
@@ -113,14 +113,14 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">
+            <label className="block text-xs font-bold text-slate-700 mb-1">
               Measurement Unit
             </label>
             <select
               value={unit}
               onChange={(e) => setUnit(e.target.value as any)}
               disabled={disabled || submitting}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-[#0d6e48] disabled:opacity-50"
             >
               <option value="KG">Kilograms (KG)</option>
               <option value="QUINTAL">Quintals (q) [1q = 100kg]</option>
@@ -130,25 +130,25 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
         </div>
 
         {/* Live Weight Gauge Display */}
-        <div className="grid grid-cols-3 gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800/80 text-center">
-          <div className="p-2 bg-slate-900/60 rounded-lg border border-slate-800">
-            <span className="text-[10px] uppercase font-semibold text-slate-400">Gross Weight</span>
-            <div className="text-xl font-bold text-slate-100 font-mono mt-1">
-              {grossNum.toLocaleString()} <span className="text-xs text-slate-400">{unit}</span>
+        <div className="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+          <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Gross Weight</span>
+            <div className="text-lg font-bold text-slate-900 font-mono mt-1">
+              {grossNum.toLocaleString()} <span className="text-xs text-slate-500">{unit}</span>
             </div>
           </div>
-          <div className="p-2 bg-slate-900/60 rounded-lg border border-slate-800">
-            <span className="text-[10px] uppercase font-semibold text-slate-400">Tare (Vehicle)</span>
-            <div className="text-xl font-bold text-amber-400 font-mono mt-1">
-              {tareNum.toLocaleString()} <span className="text-xs text-slate-400">{unit}</span>
+          <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Tare (Vehicle)</span>
+            <div className="text-lg font-bold text-amber-700 font-mono mt-1">
+              {tareNum.toLocaleString()} <span className="text-xs text-slate-500">{unit}</span>
             </div>
           </div>
-          <div className="p-2 bg-emerald-950/40 rounded-lg border border-emerald-800/50">
-            <span className="text-[10px] uppercase font-semibold text-emerald-400">Authoritative Net</span>
-            <div className="text-xl font-bold text-emerald-400 font-mono mt-1">
-              {netKg.toLocaleString()} <span className="text-xs text-emerald-500/80">KG</span>
+          <div className="p-3 bg-[#e6f7ef] rounded-xl border border-[#b2e8cf]">
+            <span className="text-[10px] uppercase font-bold text-[#0d6e48]">Authoritative Net</span>
+            <div className="text-lg font-bold text-[#0d6e48] font-mono mt-1">
+              {netKg.toLocaleString()} <span className="text-xs text-[#0d6e48]">KG</span>
             </div>
-            <span className="text-[10px] text-emerald-400/70 font-mono font-medium">
+            <span className="text-[10px] text-[#0d6e48] font-mono font-bold">
               ({netQuintals} q)
             </span>
           </div>
@@ -157,8 +157,8 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
         {/* Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              Gross Weight ({unit}) <span className="text-emerald-400">*</span>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Gross Weight ({unit}) <span className="text-[#0d6e48]">*</span>
             </label>
             <input
               type="number"
@@ -167,13 +167,13 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
               onChange={(e) => setGrossWeight(e.target.value)}
               disabled={disabled || submitting}
               placeholder="e.g. 2050"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-100 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 font-bold focus:bg-white focus:outline-none focus:border-[#0d6e48] disabled:opacity-50"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              Tare Weight ({unit}) <span className="text-emerald-400">*</span>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Tare Weight ({unit}) <span className="text-[#0d6e48]">*</span>
             </label>
             <input
               type="number"
@@ -182,7 +182,7 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
               onChange={(e) => setTareWeight(e.target.value)}
               disabled={disabled || submitting}
               placeholder="e.g. 100"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-100 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 font-bold focus:bg-white focus:outline-none focus:border-[#0d6e48] disabled:opacity-50"
             />
           </div>
         </div>
@@ -191,7 +191,7 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-900/20 disabled:opacity-50"
+            className="w-full bg-[#0d6e48] hover:bg-[#095235] text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs shadow-md disabled:opacity-50"
           >
             {submitting ? (
               <>
@@ -200,7 +200,7 @@ export const WeighmentWidget: React.FC<WeighmentWidgetProps> = ({
               </>
             ) : (
               <>
-                <span>⚖️</span> Confirm & Record Official Weighment
+                <span>⚖️</span> Confirm &amp; Record Official Weighment
               </>
             )}
           </button>

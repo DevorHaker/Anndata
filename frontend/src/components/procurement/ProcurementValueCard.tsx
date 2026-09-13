@@ -19,23 +19,23 @@ export const ProcurementValueCard: React.FC<ProcurementValueCardProps> = ({
   const acceptedQuintals = Math.round((procurement.finalAcceptedWeightKg / 100) * 100) / 100;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl text-slate-100">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+    <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm font-sans">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
         <div>
-          <h3 className="text-lg font-bold flex items-center gap-2 text-indigo-400">
-            <span>💰</span> Financial Valuation & MSP Settlement
+          <h3 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
+            <span>💰</span> Financial Valuation &amp; MSP Settlement
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
             Government Minimum Support Price (MSP) Rate Matrix 2026
           </p>
         </div>
         <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full border ${
+          className={`px-3 py-1 text-xs font-bold rounded-full border ${
             isCompleted
-              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+              ? 'bg-[#e6f7ef] text-[#0d6e48] border-[#b2e8cf]'
               : isRejected
-              ? 'bg-red-500/10 text-red-400 border-red-500/30'
-              : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30'
+              ? 'bg-rose-50 text-rose-800 border-rose-200'
+              : 'bg-indigo-50 text-indigo-800 border-indigo-200'
           }`}
         >
           {isCompleted ? 'COMPLETED (PAYMENT READY)' : isRejected ? 'REJECTED' : procurement.status}
@@ -43,51 +43,51 @@ export const ProcurementValueCard: React.FC<ProcurementValueCardProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-          <span className="text-xs font-medium text-slate-400 uppercase tracking-wider block mb-1">
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
             Authoritative Govt MSP Rate
           </span>
-          <div className="text-2xl font-bold text-slate-100 font-mono">
+          <div className="text-2xl font-bold font-serif-header text-slate-900 font-mono">
             ₹{procurement.ratePerQuintal.toLocaleString()}{' '}
-            <span className="text-xs text-slate-400 font-sans">/ Quintal</span>
+            <span className="text-xs text-slate-500 font-sans">/ Quintal</span>
           </div>
-          <span className="text-xs text-slate-500 font-mono mt-1 block">
+          <span className="text-xs text-slate-500 font-mono font-medium mt-1 block">
             (Equivalent to ₹{procurement.ratePerKg} / KG | Version: {procurement.rateVersion || '2026-MSP-01'})
           </span>
         </div>
 
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-          <span className="text-xs font-medium text-slate-400 uppercase tracking-wider block mb-1">
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
             Accepted Produce Quantity
           </span>
-          <div className="text-2xl font-bold text-emerald-400 font-mono">
-            {procurement.finalAcceptedWeightKg.toLocaleString()} <span className="text-xs text-emerald-500 font-sans">KG</span>
+          <div className="text-2xl font-bold text-[#0d6e48] font-mono">
+            {procurement.finalAcceptedWeightKg.toLocaleString()} <span className="text-xs text-[#0d6e48] font-sans">KG</span>
           </div>
-          <span className="text-xs text-slate-400 font-mono mt-1 block">
+          <span className="text-xs text-slate-500 font-mono font-medium mt-1 block">
             ({acceptedQuintals} Quintals accepted after {procurement.qualityDeductionKg} KG quality deduction)
           </span>
         </div>
       </div>
 
       {/* Financial Breakdown Table */}
-      <div className="bg-slate-950 rounded-xl border border-slate-800 p-4 mb-6 space-y-3">
-        <div className="flex justify-between items-center text-sm">
-          <span className="text-slate-400">Gross Procurement Amount ({acceptedQuintals} q @ ₹{procurement.ratePerQuintal}/q)</span>
-          <span className="font-mono font-semibold text-slate-200">
+      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-4 mb-6 space-y-3 font-medium text-xs">
+        <div className="flex justify-between items-center text-slate-700">
+          <span>Gross Procurement Amount ({acceptedQuintals} q @ ₹{procurement.ratePerQuintal}/q)</span>
+          <span className="font-mono font-bold text-slate-900">
             ₹{procurement.grossPayableAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
-        <div className="flex justify-between items-center text-sm border-t border-slate-800/80 pt-2">
-          <span className="text-slate-400">Quality & Logistics Deductions</span>
-          <span className="font-mono font-semibold text-amber-400">
+        <div className="flex justify-between items-center text-slate-700 border-t border-slate-200 pt-2">
+          <span>Quality &amp; Logistics Deductions</span>
+          <span className="font-mono font-bold text-amber-700">
             -₹{procurement.totalDeductionsAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
-        <div className="flex justify-between items-center text-base border-t border-slate-800 pt-3 font-bold">
-          <span className="text-slate-100 flex items-center gap-1.5">
+        <div className="flex justify-between items-center border-t border-slate-200 pt-3 font-bold text-sm">
+          <span className="text-slate-900 flex items-center gap-1.5 font-serif-header">
             <span>💳</span> Net Payable Amount (Direct Benefit Transfer):
           </span>
-          <span className="font-mono text-xl text-emerald-400">
+          <span className="font-mono text-xl text-[#0d6e48] font-bold">
             ₹{procurement.netPayableAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
@@ -95,19 +95,19 @@ export const ProcurementValueCard: React.FC<ProcurementValueCardProps> = ({
 
       {/* Phase 10 Payment Ready Handoff Status */}
       {procurement.paymentReady && (
-        <div className="mb-6 p-4 bg-emerald-950/40 border border-emerald-800/60 rounded-xl flex items-center justify-between">
+        <div className="mb-6 p-4 bg-[#e6f7ef] border border-[#b2e8cf] rounded-2xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">
+            <div className="w-9 h-9 rounded-full bg-[#0d6e48] text-white flex items-center justify-center font-bold text-sm">
               ✓
             </div>
             <div>
-              <h4 className="text-sm font-bold text-emerald-300">Phase 10 Payment-Ready Handoff Established</h4>
-              <p className="text-xs text-emerald-400/80">
+              <h4 className="text-sm font-bold text-[#0d6e48] font-serif-header">Payment-Ready Handoff Established</h4>
+              <p className="text-xs text-[#0d6e48] font-medium">
                 Procurement session finalized. Record queued for Direct Benefit Transfer (DBT) bank payout.
               </p>
             </div>
           </div>
-          <span className="text-xs font-mono px-3 py-1 bg-emerald-900/60 text-emerald-300 border border-emerald-700/50 rounded-lg">
+          <span className="text-xs font-mono px-3 py-1 bg-white text-[#0d6e48] border border-[#b2e8cf] rounded-xl font-bold shadow-sm">
             DBT-QUEUED
           </span>
         </div>
@@ -120,7 +120,7 @@ export const ProcurementValueCard: React.FC<ProcurementValueCardProps> = ({
             <button
               onClick={onCalculateValue}
               disabled={submitting}
-              className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm border border-slate-700 disabled:opacity-50"
+              className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs border border-slate-200 disabled:opacity-50"
             >
               <span>🧮</span> Calculate Authoritative Value
             </button>
@@ -130,7 +130,7 @@ export const ProcurementValueCard: React.FC<ProcurementValueCardProps> = ({
             <button
               onClick={onFinalize}
               disabled={submitting}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-lg shadow-indigo-900/20 disabled:opacity-50"
+              className="flex-1 bg-[#0d6e48] hover:bg-[#095235] text-white font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs shadow-md disabled:opacity-50"
             >
               {submitting ? (
                 <>
@@ -139,7 +139,7 @@ export const ProcurementValueCard: React.FC<ProcurementValueCardProps> = ({
                 </>
               ) : (
                 <>
-                  <span>🔒</span> Finalize Session & Handoff to Payment Engine
+                  <span>🔒</span> Finalize Session &amp; Handoff to Payment Engine
                 </>
               )}
             </button>
