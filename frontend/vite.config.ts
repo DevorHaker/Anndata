@@ -9,9 +9,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Tell Vite where to output static files — must match vercel.json "outputDirectory"
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+  },
   server: {
     port: 3000,
     host: true,
+    // Dev only: proxy /api requests to the local backend server
     proxy: {
       "/api": {
         target: "http://localhost:5000",

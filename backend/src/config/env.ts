@@ -9,14 +9,14 @@ dotenv.config();
 const envSchema = z
   .object({
     NODE_ENV: z
-      .enum(["development", "test", "production"])
+      .enum(["development", "test", "staging", "production"])
       .default("development"),
     PORT: z.coerce.number().default(5000),
     API_PREFIX: z.string().default("/api/v1"),
     DATABASE_URL: z
       .string()
       .default("postgresql://postgres:postgres@localhost:5432/smart_procure"),
-    REDIS_URL: z.string().default("redis://localhost:6379"),
+    REDIS_URL: z.string().optional().default("redis://localhost:6379"),
     JWT_SECRET: z
       .string()
       .min(10)
@@ -28,10 +28,17 @@ const envSchema = z
     PAYMENT_PROVIDER_MODE: z.enum(["mock", "disabled", "pfms", "npci"]).default("mock"),
     FEATURE_AI_RECOMMENDATIONS: z.coerce.boolean().default(true),
     FEATURE_VOICE_ASSISTANCE: z.coerce.boolean().default(true),
+    // Vercel-injected environment variables (optional — only present on Vercel)
+    VERCEL: z.string().optional(),
+    VERCEL_URL: z.string().optional(),
+    VERCEL_ENV: z.enum(["production", "preview", "development"]).optional(),
   })
   .refine(
     (data) => {
-      if (data.NODE_ENV === "production") {
+      // On Vercel, CORS is handled by vercel.json response headers — skip the CORS check.
+      // JWT_SECRET must still be changed from the dev default in production on any platform.
+      const isVercel = !!data.VERCEL;
+      if (data.NODE_ENV === "production" && !isVercel) {
         if (data.JWT_SECRET === "dev-smart-procure-super-secret-key-change-in-prod") {
           return false;
         }
@@ -43,7 +50,7 @@ const envSchema = z
     },
     {
       message:
-        "Production environment requires explicit non-default JWT_SECRET and strict CORS_ORIGIN domain (cannot be '*').",
+        "Production (non-Vercel) deployment requires explicit non-default JWT_SECRET and strict CORS_ORIGIN domain (cannot be '*').",
       path: ["JWT_SECRET"],
     }
   );

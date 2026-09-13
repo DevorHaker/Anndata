@@ -238,7 +238,7 @@ intelligenceRouter.post(
       });
 
       if (!record) {
-        throw new AppError('Decision record not found', 404);
+        throw new AppError('DECISION_NOT_FOUND', 'Decision record not found', 404);
       }
 
       res.json({
@@ -262,7 +262,7 @@ intelligenceRouter.get(
     try {
       const decision = await intelligenceService.getDecisionById(req.params.decisionId);
       if (!decision) {
-        throw new AppError('Decision record not found', 404);
+        throw new AppError('DECISION_NOT_FOUND', 'Decision record not found', 404);
       }
       res.json({
         success: true,

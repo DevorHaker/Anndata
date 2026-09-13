@@ -17,6 +17,9 @@ build/
 out/
 .vite/
 
+# Vercel build cache & output
+.vercel/
+
 # Database / Storage
 *.sqlite
 *.db

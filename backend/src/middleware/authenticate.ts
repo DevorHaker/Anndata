@@ -19,7 +19,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new AuthenticationError('Authentication required. Missing Bearer token.', 'UNAUTHENTICATED');
+      throw new AuthenticationError('UNAUTHENTICATED', 'Authentication required. Missing Bearer token.');
     }
 
     const token = authHeader.split(' ')[1];
@@ -28,11 +28,11 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     // Verify account state directly or via DB check
     const user = await userRepository.findById(payload.sub);
     if (!user) {
-      throw new AuthenticationError('User identity associated with token no longer exists.', 'USER_NOT_FOUND');
+      throw new AuthenticationError('USER_NOT_FOUND', 'User identity associated with token no longer exists.');
     }
 
     if (user.status !== 'ACTIVE') {
-      throw new ForbiddenError(`Account status is ${user.status}. Access denied.`, 'ACCOUNT_INACTIVE');
+      throw new ForbiddenError('ACCOUNT_INACTIVE', `Account status is ${user.status}. Access denied.`);
     }
 
     req.user = {

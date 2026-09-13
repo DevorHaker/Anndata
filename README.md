@@ -94,6 +94,22 @@ npm run dev
 
 ---
 
+## 🌐 Vercel Production Deployment
+
+SmartProcure is ready to deploy directly to **Vercel** with full monorepo support (Frontend SPA + Express Serverless API).
+
+See the step-by-step guide in [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md).
+
+```bash
+# Deploy to Vercel CLI directly
+npx vercel
+
+# Deploy to production
+npx vercel --prod
+```
+
+---
+
 ## 🐳 Docker Full Stack Setup
 
 To run all 4 containers (PostgreSQL, Redis, Backend, Frontend) simultaneously:

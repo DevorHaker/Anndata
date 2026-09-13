@@ -4,7 +4,7 @@ import { ForbiddenError, AuthenticationError } from '../utils/errors';
 export function authorizeRole(allowedRoles: string[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user || !req.user.role) {
-      return next(new AuthenticationError('Authentication required to verify permissions', 'UNAUTHENTICATED'));
+      return next(new AuthenticationError('UNAUTHENTICATED', 'Authentication required to verify permissions'));
     }
 
     const normalizedUserRole = req.user.role === 'ADMIN' ? 'SYSTEM_ADMIN' : req.user.role;
@@ -13,8 +13,8 @@ export function authorizeRole(allowedRoles: string[]) {
     if (!normalizedAllowed.includes(normalizedUserRole)) {
       return next(
         new ForbiddenError(
-          `Role '${req.user.role}' does not have authorization to access this resource`,
-          'FORBIDDEN_ROLE'
+          'FORBIDDEN_ROLE',
+          `Role '${req.user.role}' does not have authorization to access this resource`
         )
       );
     }
@@ -26,7 +26,7 @@ export function authorizeRole(allowedRoles: string[]) {
 export function authorizePermission(requiredPermission: string) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return next(new AuthenticationError('Authentication required', 'UNAUTHENTICATED'));
+      return next(new AuthenticationError('UNAUTHENTICATED', 'Authentication required'));
     }
 
     // System admin role automatically possesses all permissions
@@ -39,8 +39,8 @@ export function authorizePermission(requiredPermission: string) {
     if (!hasPermission) {
       return next(
         new ForbiddenError(
-          `Missing required permission code: ${requiredPermission}`,
-          'FORBIDDEN_PERMISSION'
+          'FORBIDDEN_PERMISSION',
+          `Missing required permission code: ${requiredPermission}`
         )
       );
     }
@@ -52,7 +52,7 @@ export function authorizePermission(requiredPermission: string) {
 export function validateScope(scopeConfig: { resource: string; paramName?: string }) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return next(new AuthenticationError('Authentication required', 'UNAUTHENTICATED'));
+      return next(new AuthenticationError('UNAUTHENTICATED', 'Authentication required'));
     }
 
     const userRole = req.user.role;
@@ -68,7 +68,7 @@ export function validateScope(scopeConfig: { resource: string; paramName?: strin
     if (userRole === 'FARMER') {
       if (targetResourceId && req.user.farmerId && targetResourceId !== req.user.farmerId) {
         return next(
-          new ForbiddenError('Access denied: You cannot access or modify resources belonging to another farmer', 'BOLA_SCOPE_VIOLATION')
+          new ForbiddenError('BOLA_SCOPE_VIOLATION', 'Access denied: You cannot access or modify resources belonging to another farmer')
         );
       }
     }
