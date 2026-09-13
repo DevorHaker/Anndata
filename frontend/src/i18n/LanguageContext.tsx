@@ -8,6 +8,9 @@ interface LanguageContextType {
   t: (key: string, params?: Record<string, string | number>) => string;
   isAssistedMode: boolean;
   toggleAssistedMode: () => void;
+  isLanguageModalOpen: boolean;
+  openLanguageModal: () => void;
+  closeLanguageModal: () => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -22,9 +25,22 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     return localStorage.getItem('smartprocure_assisted_mode') === 'true';
   });
 
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState<boolean>(() => {
+    return !localStorage.getItem('smartprocure_lang_selected');
+  });
+
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('smartprocure_lang', lang);
+    localStorage.setItem('smartprocure_lang_selected', 'true');
+  };
+
+  const openLanguageModal = () => {
+    setIsLanguageModalOpen(true);
+  };
+
+  const closeLanguageModal = () => {
+    setIsLanguageModalOpen(false);
   };
 
   const toggleAssistedMode = () => {
@@ -49,7 +65,18 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isAssistedMode, toggleAssistedMode }}>
+    <LanguageContext.Provider
+      value={{
+        language,
+        setLanguage,
+        t,
+        isAssistedMode,
+        toggleAssistedMode,
+        isLanguageModalOpen,
+        openLanguageModal,
+        closeLanguageModal
+      }}
+    >
       <LanguageSelectionModal />
       <div className={isAssistedMode ? 'assisted-mode-high-visibility' : ''}>
         {children}

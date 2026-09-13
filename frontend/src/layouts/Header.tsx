@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { LogOut, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../i18n/LanguageContext';
+import { LANGUAGES } from '../i18n/translations';
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
-  const { language, setLanguage } = useLanguage();
+  const { language, openLanguageModal } = useLanguage();
+
+  const activeLangObj = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-emerald-100/80 px-4 md:px-8 py-3 text-slate-800 flex items-center justify-between shadow-sm font-sans">
@@ -35,14 +38,17 @@ export const Header: React.FC = () => {
           <span>Online</span>
         </div>
 
-        {/* Interactive Language Selector */}
+        {/* Multi-Language Selector Pill Button */}
         <button
-          onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-full border border-slate-200 transition-colors shadow-sm"
-          title="Switch Language / भाषा बदलें"
+          onClick={openLanguageModal}
+          className="flex items-center gap-2 px-3.5 py-1.5 bg-slate-50 hover:bg-[#e6f7ef] text-slate-800 hover:text-[#0d6e48] text-xs font-bold rounded-full border border-slate-200 hover:border-[#b2e8cf] transition-all shadow-sm group"
+          title="Select Preferred Language / भाषा बदलें"
         >
-          <Globe className="w-3.5 h-3.5 text-[#0d6e48]" />
-          <span>{language === 'en' ? 'हिन्दी' : 'English'}</span>
+          <Globe className="w-4 h-4 text-[#0d6e48] group-hover:scale-110 transition-transform" />
+          <span className="flex items-center gap-1">
+            <span>{activeLangObj.nativeName}</span>
+            <span className="text-[10px] opacity-60">({activeLangObj.name})</span>
+          </span>
         </button>
 
         {isAuthenticated && user ? (

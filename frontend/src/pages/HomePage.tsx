@@ -8,9 +8,7 @@ import {
   Cpu,
   Layers,
   Sparkles,
-  TrendingDown,
   Clock,
-  Users,
   ShieldCheck,
   Building2,
   Sprout,
@@ -23,8 +21,11 @@ import {
   TrendingUp,
   MapPin
 } from "lucide-react";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export const HomePage: React.FC = () => {
+  const { t } = useLanguage();
+
   // Interactive Ecosystem Hub State
   const [activeNode, setActiveNode] = useState<number>(0);
 
@@ -39,90 +40,90 @@ export const HomePage: React.FC = () => {
   const ecosystemNodes = [
     {
       id: 0,
-      title: "Farmer & Crop Declaration",
+      title: t('bookings'),
       icon: Sprout,
       color: "from-emerald-500 to-teal-600",
       badgeBg: "bg-emerald-50 text-emerald-700 border-emerald-200",
-      description: "Farmers declare crop varieties, estimated yield, and select preferred procurement dates with AI-assisted slot guidance.",
+      description: t('selectLanguageDesc'),
       metrics: [
         { label: "Verified Farmers", val: "1,24,500+" },
         { label: "AI Accuracy", val: "98.7%" },
         { label: "Registration Speed", val: "< 2 mins" }
       ],
-      actionText: "Register as Farmer",
+      actionText: t('bookings'),
       actionPath: "/register"
     },
     {
       id: 1,
-      title: "Smart Mandi & Queue Balancing",
+      title: t('tokenQueue'),
       icon: Building2,
       color: "from-[#0d6e48] to-emerald-700",
       badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-200",
-      description: "Procurement centres dynamically balance capacity, prevent congestion, and issue cryptographic token tickets.",
+      description: t('offlineNotice'),
       metrics: [
         { label: "Active Centres", val: "342 Mandis" },
         { label: "Wait Reduction", val: "68%" },
         { label: "Avg Mandi Load", val: "42%" }
       ],
-      actionText: "Explore Mandi Centres",
+      actionText: t('tokenQueue'),
       actionPath: "/centres"
     },
     {
       id: 2,
-      title: "Quality & Moisture Testing",
+      title: t('intelligence'),
       icon: Microscope,
       color: "from-amber-500 to-[#0d6e48]",
       badgeBg: "bg-amber-50 text-amber-800 border-amber-200",
-      description: "Real-time automated weighbridge integration and digital quality testing log moisture levels and grade certificates.",
+      description: t('speakTokenInfo'),
       metrics: [
         { label: "Moisture Precision", val: "± 0.1%" },
         { label: "Weighment Speed", val: "45 secs" },
         { label: "Grade Accuracy", val: "99.9%" }
       ],
-      actionText: "View Traceability",
+      actionText: t('intelligence'),
       actionPath: "/intelligence/farmer"
     },
     {
       id: 3,
-      title: "Logistics & Storage Hub",
+      title: t('offlineOps'),
       icon: Truck,
       color: "from-blue-600 to-indigo-700",
       badgeBg: "bg-blue-50 text-blue-800 border-blue-200",
-      description: "Automated dispatch triggers coordinate truck loading, silo storage allocation, and warehouse capacity tracking.",
+      description: t('offlineTitle'),
       metrics: [
         { label: "Daily Grain Transit", val: "18,400 MT" },
         { label: "Logistics Tracking", val: "Live GPS" },
         { label: "Silo Capacity", val: "84% Opt" }
       ],
-      actionText: "Check Operations",
+      actionText: t('offlineOps'),
       actionPath: "/intelligence/staff"
     },
     {
       id: 4,
-      title: "Instant DBT Payouts",
+      title: t('payments'),
       icon: CreditCard,
       color: "from-purple-600 to-[#0d6e48]",
       badgeBg: "bg-purple-50 text-purple-800 border-purple-200",
-      description: "Direct Benefit Transfer (DBT) delivers funds directly to verified farmer bank accounts upon batch approval.",
+      description: t('amountCredited'),
       metrics: [
         { label: "Disbursed Amount", val: "₹ 482 Cr+" },
         { label: "Payout SLA", val: "Same Day" },
         { label: "Success Rate", val: "99.8%" }
       ],
-      actionText: "View DBT Payouts",
+      actionText: t('payments'),
       actionPath: "/payments"
     }
   ];
 
   const steps = [
-    { title: "Register", desc: "Farmer identity verification" },
-    { title: "Recommend", desc: "AI crop & slot guide" },
-    { title: "Slot", desc: "Concurrency reservation" },
-    { title: "Token", desc: "Cryptographic QR code" },
-    { title: "Queue", desc: "Priority wait management" },
-    { title: "Procurement", desc: "Weighment & quality test" },
-    { title: "Payment", desc: "Automated DBT transfer" },
-    { title: "Tracking", desc: "End-to-end transparency" },
+    { title: t('farmerWelcome'), desc: "Identity & MSP Verification" },
+    { title: t('intelligence'), desc: "AI crop & slot guide" },
+    { title: t('bookings'), desc: "Slot reservation" },
+    { title: t('tokenNumber'), desc: "QR code token ticket" },
+    { title: t('tokenQueue'), desc: "Live wait management" },
+    { title: t('procurement'), desc: "Weighment & moisture test" },
+    { title: t('payments'), desc: "Automated DBT transfer" },
+    { title: t('online'), desc: "Real-time transparent updates" },
   ];
 
   // Interactive Live Simulator calculations
@@ -135,7 +136,7 @@ export const HomePage: React.FC = () => {
   const { wait, saved } = calculateWaitTime();
 
   return (
-    <div className="space-y-20 pb-16">
+    <div className="space-y-20 pb-16 font-sans">
       
       {/* Top Colorful Accent Line */}
       <div className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-amber-500 via-blue-500 to-rose-500 rounded-full shadow-sm" />
@@ -150,20 +151,19 @@ export const HomePage: React.FC = () => {
             {/* SIH Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e6f7ef] border border-[#b2e8cf] text-[#0d6e48] text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>SIH 26032 • DEMO MODE READY</span>
+              <span>{t('appName')} • {t('appSubtitle')}</span>
             </div>
 
             {/* Main Serif Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif-header text-slate-900 tracking-tight leading-[1.15]">
-              Smart Procurement.<br />
-              <span className="text-[#0d6e48]">Less Waiting.</span><br />
-              Better Service.
+              {t('appName')}<br />
+              <span className="text-[#0d6e48]">{t('tokenQueue')}</span><br />
+              {t('payments')}
             </h1>
 
             {/* Paragraph Subtitle */}
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
-              An intelligent procurement management platform that predicts congestion,
-              optimizes farmer slots and helps procurement centres coordinate queues efficiently.
+              {t('selectLanguageDesc')}
             </p>
 
             {/* CTA Action Buttons */}
@@ -172,7 +172,7 @@ export const HomePage: React.FC = () => {
                 to="/register"
                 className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#0d6e48] hover:bg-[#095235] text-white text-sm font-semibold rounded-2xl transition shadow-lg shadow-emerald-950/10 hover:shadow-xl hover:translate-y-[-1px]"
               >
-                <span>Book Procurement Slot</span>
+                <span>{t('bookings')}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
 
@@ -180,7 +180,7 @@ export const HomePage: React.FC = () => {
                 to="/centres"
                 className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#e6f7ef] hover:bg-[#d1f2e2] text-[#0d6e48] border border-[#b2e8cf] text-sm font-semibold rounded-2xl transition"
               >
-                <span>Find Procurement Centre</span>
+                <span>{t('tokenQueue')}</span>
               </Link>
             </div>
 
@@ -188,15 +188,15 @@ export const HomePage: React.FC = () => {
             <div className="pt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-slate-600">
               <div className="flex items-center gap-1.5">
                 <span className="text-[#0d6e48]">✓</span>
-                <span>Quantity-aware scheduling</span>
+                <span>{t('online')}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[#0d6e48]">✓</span>
-                <span>Dynamic queue prediction</span>
+                <span>{t('estimatedWait')}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[#0d6e48]">✓</span>
-                <span>Offline-first prototype</span>
+                <span>{t('payments')}</span>
               </div>
             </div>
           </div>
@@ -208,7 +208,7 @@ export const HomePage: React.FC = () => {
             <div className="absolute -top-6 -right-2 z-20 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-slate-100 shadow-lg flex items-center gap-3 animate-bounce-subtle">
               <div className="text-right">
                 <div className="text-emerald-700 text-sm font-extrabold font-serif-header">-26 min</div>
-                <div className="text-[10px] text-slate-500 font-medium">waiting time optimized</div>
+                <div className="text-[10px] text-slate-500 font-medium">{t('estimatedWait')}</div>
               </div>
             </div>
 
@@ -216,7 +216,7 @@ export const HomePage: React.FC = () => {
             <div className="absolute -bottom-6 -left-4 z-20 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-slate-100 shadow-lg flex items-center gap-3">
               <div>
                 <div className="text-[#0d6e48] text-sm font-extrabold font-serif-header">92/100</div>
-                <div className="text-[10px] text-slate-500 font-medium">centre performance</div>
+                <div className="text-[10px] text-slate-500 font-medium">{t('centreStatus')}</div>
               </div>
             </div>
 
@@ -227,7 +227,7 @@ export const HomePage: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <h3 className="text-sm font-bold text-slate-900">Live Centre Intelligence</h3>
+                  <h3 className="text-sm font-bold text-slate-900">{t('intelligence')}</h3>
                 </div>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#e6f7ef] text-[#0d6e48] text-[10px] font-bold tracking-wider">
                   OPTIMAL
@@ -237,7 +237,7 @@ export const HomePage: React.FC = () => {
               {/* 3 Metric Column Cards */}
               <div className="grid grid-cols-3 gap-3 text-center bg-slate-50/70 p-3 rounded-2xl border border-slate-100">
                 <div className="space-y-0.5">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">QUEUE</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t('tokenNumber')}</div>
                   <div className="text-xl font-bold font-serif-header text-slate-900">06</div>
                   <div className="text-[9px] text-slate-500 font-medium">farmers ahead</div>
                 </div>
@@ -245,32 +245,32 @@ export const HomePage: React.FC = () => {
                 <div className="space-y-0.5 border-x border-slate-200 px-1">
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ETA</div>
                   <div className="text-xl font-bold font-serif-header text-slate-900">17 <span className="text-xs font-normal">min</span></div>
-                  <div className="text-[9px] text-slate-500 font-medium">estimated wait</div>
+                  <div className="text-[9px] text-slate-500 font-medium">{t('estimatedWait')}</div>
                 </div>
 
                 <div className="space-y-0.5">
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">LOAD</div>
                   <div className="text-xl font-bold font-serif-header text-slate-900">34 <span className="text-xs font-normal">%</span></div>
-                  <div className="text-[9px] text-slate-500 font-medium">centre capacity</div>
+                  <div className="text-[9px] text-slate-500 font-medium">{t('centreStatus')}</div>
                 </div>
               </div>
 
               {/* Live Queue Items Table */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between p-2.5 bg-emerald-50/60 rounded-xl border border-emerald-100 text-xs">
-                  <span className="px-2 py-0.5 bg-[#0d6e48] text-white text-[10px] font-bold rounded-md">A-024</span>
-                  <span className="font-semibold text-slate-800">Current farmer</span>
+                  <span className="px-2 py-0.5 bg-[#0d6e48] text-white text-[10px] font-bold rounded-md">T-024</span>
+                  <span className="font-semibold text-slate-800">{t('tokenNumber')}</span>
                   <span className="text-slate-500 font-mono text-[11px]">11:42 AM</span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200/70 text-xs">
-                  <span className="font-bold text-[#0d6e48] text-[11px]">A-025</span>
+                  <span className="font-bold text-[#0d6e48] text-[11px]">T-025</span>
                   <span className="text-slate-600">35 q</span>
                   <span className="text-slate-400 font-mono text-[11px]">11:57 AM</span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200/70 text-xs">
-                  <span className="font-bold text-[#0d6e48] text-[11px]">A-026</span>
+                  <span className="font-bold text-[#0d6e48] text-[11px]">T-026</span>
                   <span className="text-slate-600">18 q</span>
                   <span className="text-slate-400 font-mono text-[11px]">12:06 PM</span>
                 </div>
@@ -278,8 +278,8 @@ export const HomePage: React.FC = () => {
 
               {/* Recommendation Banner */}
               <div className="p-3 bg-[#e6f7ef] rounded-2xl border border-[#b2e8cf] text-xs space-y-0.5">
-                <div className="font-bold text-[#0d6e48] text-[11px]">Smart Recommendation</div>
-                <div className="text-slate-700 text-[11px]">Centre B is currently the fastest suitable option.</div>
+                <div className="font-bold text-[#0d6e48] text-[11px]">{t('intelligence')}</div>
+                <div className="text-slate-700 text-[11px]">{t('estimatedWait')}</div>
               </div>
 
             </div>
@@ -288,7 +288,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* NEW INTERACTIVE ECOSYSTEM HUB SECTION */}
+      {/* INTERACTIVE ECOSYSTEM HUB SECTION */}
       <section className="pt-8 space-y-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
@@ -296,15 +296,14 @@ export const HomePage: React.FC = () => {
           <div className="lg:col-span-5 space-y-6">
             <div className="space-y-3">
               <h2 className="text-3xl sm:text-4xl font-bold font-serif-header text-slate-900 leading-tight">
-                Building trusted paths of growth for every agri citizen
+                {t('farmerWelcome')}
               </h2>
               {/* Colorful underline accent */}
               <div className="h-1 w-24 bg-gradient-to-r from-emerald-500 via-amber-500 to-indigo-500 rounded-full" />
             </div>
 
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              By harnessing technology and AI-driven slot optimization, we connect small farmers,
-              mandi officers, quality weighbridges, and DBT banking infrastructure into a single transparent ecosystem.
+              {t('selectLanguageDesc')}
             </p>
 
             {/* Interactive Node Selector List */}
@@ -330,7 +329,7 @@ export const HomePage: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-xs font-bold">{node.title}</div>
-                        <div className="text-[11px] text-slate-500 font-medium hidden sm:block">Step 0{index + 1} in Procurement Chain</div>
+                        <div className="text-[11px] text-slate-500 font-medium hidden sm:block">Step 0{index + 1}</div>
                       </div>
                     </div>
                     <ChevronRight className={`w-4 h-4 transition-transform ${isSelected ? "translate-x-1 text-[#0d6e48]" : "text-slate-400"}`} />
@@ -344,7 +343,7 @@ export const HomePage: React.FC = () => {
                 to="/register"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#f59e0b] hover:bg-[#d97706] text-white font-bold text-xs rounded-full shadow-lg shadow-amber-500/20 transition-all hover:scale-105"
               >
-                <span>Explore Ecosystem Services</span>
+                <span>{t('confirmLanguage')}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -361,13 +360,13 @@ export const HomePage: React.FC = () => {
                     {React.createElement(ecosystemNodes[activeNode].icon, { className: "w-6 h-6" })}
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">STAGE 0{activeNode + 1} ACTION NODE</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">STAGE 0{activeNode + 1}</span>
                     <h3 className="text-lg font-bold font-serif-header text-slate-900">{ecosystemNodes[activeNode].title}</h3>
                   </div>
                 </div>
 
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${ecosystemNodes[activeNode].badgeBg}`}>
-                  ACTIVE HUB
+                  ACTIVE
                 </span>
               </div>
 
@@ -388,7 +387,7 @@ export const HomePage: React.FC = () => {
 
               {/* Interactive Visual Network Diagram */}
               <div className="pt-2">
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Live Ecosystem Connectivity Map</div>
+                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Map</div>
                 <div className="grid grid-cols-5 gap-2 text-center relative">
                   {ecosystemNodes.map((n, i) => {
                     const NIcon = n.icon;
@@ -404,7 +403,7 @@ export const HomePage: React.FC = () => {
                         }`}
                       >
                         <NIcon className="w-5 h-5" />
-                        <span className="text-[10px] font-bold leading-tight line-clamp-1">{n.title.split(' ')[0]}</span>
+                        <span className="text-[10px] font-bold leading-tight line-clamp-1">{n.title}</span>
                       </div>
                     );
                   })}
@@ -428,20 +427,20 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* NEW INTERACTIVE SLOT & WAITING TIME SIMULATOR */}
+      {/* INTERACTIVE SLOT & WAITING TIME SIMULATOR */}
       <section className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-8 space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-6">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 uppercase tracking-wider mb-2">
               <Sliders className="w-3.5 h-3.5" />
-              <span>Interactive Mandi Simulator</span>
+              <span>{t('estimatedWait')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold font-serif-header text-slate-900">
-              Calculate Your Procurement Waiting Time Reduction
+              {t('estimatedWait')}
             </h2>
           </div>
           <div className="text-xs text-slate-500 max-w-xs font-medium">
-            Adjust your harvest quantity below to see real-time AI slot recommendations and queue optimization.
+            {t('selectLanguageDesc')}
           </div>
         </div>
 
@@ -454,7 +453,7 @@ export const HomePage: React.FC = () => {
             <div className="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200/70">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Estimated Produce Quantity (Quintals)
+                  Produce Quantity (Quintals)
                 </label>
                 <span className="text-lg font-bold font-serif-header text-[#0d6e48] px-3 py-1 bg-emerald-50 rounded-xl border border-emerald-200">
                   {quantity} Quintals
@@ -469,16 +468,16 @@ export const HomePage: React.FC = () => {
                 className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0d6e48]"
               />
               <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
-                <span>10 q (Small harvest)</span>
+                <span>10 q</span>
                 <span>100 q</span>
-                <span>200 q (Bulk harvest)</span>
+                <span>200 q</span>
               </div>
             </div>
 
             {/* Target Mandi Select */}
             <div className="space-y-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                Select Procurement Centre Yard
+                {t('centreStatus')}
               </label>
               <div className="relative">
                 <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
@@ -501,34 +500,34 @@ export const HomePage: React.FC = () => {
           <div className="lg:col-span-6">
             <div className="bg-[#f4fbf7] p-6 rounded-2xl border border-emerald-200 space-y-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Simulated AI Booking Pass</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">{t('tokenNumber')}</span>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold">CONFIRMED</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm text-center">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Estimated Mandi Wait</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">{t('estimatedWait')}</div>
                   <div className="text-2xl font-bold font-serif-header text-slate-900 mt-1">{wait} <span className="text-xs font-normal">mins</span></div>
-                  <div className="text-[10px] text-emerald-700 font-semibold mt-1">✓ Fast-Track Entry</div>
+                  <div className="text-[10px] text-emerald-700 font-semibold mt-1">✓ Fast-Track</div>
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm text-center">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Time Saved</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Saved Time</div>
                   <div className="text-2xl font-bold font-serif-header text-[#0d6e48] mt-1">-{saved} <span className="text-xs font-normal">mins</span></div>
-                  <div className="text-[10px] text-[#0d6e48] font-semibold mt-1">vs traditional queue</div>
+                  <div className="text-[10px] text-[#0d6e48] font-semibold mt-1">vs Queue</div>
                 </div>
               </div>
 
               <div className="bg-white p-4 rounded-xl border border-emerald-100 flex items-center justify-between text-xs">
                 <div>
-                  <div className="text-slate-500 font-medium">Target Centre:</div>
+                  <div className="text-slate-500 font-medium">{t('centreStatus')}:</div>
                   <div className="font-bold text-slate-900">{selectedMandi}</div>
                 </div>
                 <Link
                   to="/register"
                   className="px-4 py-2 bg-[#0d6e48] hover:bg-[#095235] text-white font-bold text-xs rounded-xl shadow-md transition"
                 >
-                  Book This Slot →
+                  {t('bookings')} →
                 </Link>
               </div>
             </div>
@@ -540,8 +539,8 @@ export const HomePage: React.FC = () => {
       {/* STAKEHOLDER SOLUTIONS TABS */}
       <section className="space-y-6">
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <h2 className="text-3xl font-bold font-serif-header text-slate-900">Tailored Experience for Every Role</h2>
-          <p className="text-slate-500 text-xs sm:text-sm font-medium">Select your user role to see specific platform capabilities and features</p>
+          <h2 className="text-3xl font-bold font-serif-header text-slate-900">{t('farmerWelcome')}</h2>
+          <p className="text-slate-500 text-xs sm:text-sm font-medium">{t('selectLanguageDesc')}</p>
         </div>
 
         {/* Tab Buttons */}
@@ -552,7 +551,7 @@ export const HomePage: React.FC = () => {
               activeTab === 'FARMER' ? 'bg-[#0d6e48] text-white shadow-md' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            For Farmers
+            {t('farmerWelcome')}
           </button>
           <button
             onClick={() => setActiveTab('OFFICER')}
@@ -560,7 +559,7 @@ export const HomePage: React.FC = () => {
               activeTab === 'OFFICER' ? 'bg-[#0d6e48] text-white shadow-md' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            For Mandi Officers
+            {t('procurement')}
           </button>
           <button
             onClick={() => setActiveTab('ADMIN')}
@@ -568,7 +567,7 @@ export const HomePage: React.FC = () => {
               activeTab === 'ADMIN' ? 'bg-[#0d6e48] text-white shadow-md' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            For Government Admins
+            {t('appName')} Admin
           </button>
         </div>
 
@@ -580,22 +579,22 @@ export const HomePage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <Sprout className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">Multilingual Slot Booking</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Book procurement slots in Hindi or English with automatic crop yield verification and location-aware mandi selection.</p>
+                <h3 className="font-bold text-slate-900">{t('bookings')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('selectLanguageDesc')}</p>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <Clock className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">Real-Time Mandi Waiting ETA</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Check live queue lengths and estimated wait times before leaving home to avoid long roadside queues.</p>
+                <h3 className="font-bold text-slate-900">{t('estimatedWait')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('tokenQueue')}</p>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <CreditCard className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">Direct Benefit Transfer (DBT)</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Track instant digital payments transferred directly into your bank account with complete transparency.</p>
+                <h3 className="font-bold text-slate-900">{t('payments')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('amountCredited')}</p>
               </div>
             </>
           )}
@@ -606,22 +605,22 @@ export const HomePage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <Building2 className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">Gate Token QR Verification</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Scan farmer cryptographic QR passes at mandi gate for instant check-in and automated weight ticket creation.</p>
+                <h3 className="font-bold text-slate-900">{t('tokenNumber')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('offlineCheckinBtn')}</p>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <Activity className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">Disruption & Capacity Management</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Report gate disruptions or weighbridge downtime to automatically reroute incoming farmer slots.</p>
+                <h3 className="font-bold text-slate-900">{t('centreStatus')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('offlineNotice')}</p>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">Offline-First Mandi Sync</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Operate weighbridge logging offline during network outages with conflict-free background synchronization.</p>
+                <h3 className="font-bold text-slate-900">{t('offlineOps')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('syncSuccess')}</p>
               </div>
             </>
           )}
@@ -632,22 +631,22 @@ export const HomePage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <TrendingUp className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">State-Wide Procurement Analytics</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Monitor real-time MSP procurement volumes, district load distributions, and DBT disbursement velocity.</p>
+                <h3 className="font-bold text-slate-900">{t('intelligence')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('procurement')}</p>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <Sparkles className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">AI Congestion & What-If Engine</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Simulate weather disruptions, crop harvest surges, and staff availability to optimize state procurement policy.</p>
+                <h3 className="font-bold text-slate-900">{t('intelligence')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('estimatedWait')}</p>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#0d6e48] flex items-center justify-center font-bold">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-slate-900">Audit Trails & RBAC Security</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">Enforce strict role-based access control with tamper-evident audit logs for every procurement transaction.</p>
+                <h3 className="font-bold text-slate-900">{t('syncConflicts')}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t('syncConflictsFound')}</p>
               </div>
             </>
           )}
@@ -660,7 +659,7 @@ export const HomePage: React.FC = () => {
           <div>
             <h2 className="text-2xl font-bold font-serif-header text-slate-900 flex items-center gap-2">
               <Layers className="w-6 h-6 text-[#0d6e48]" />
-              End-to-End Procurement Journey
+              {t('procurement')}
             </h2>
             <p className="text-xs text-slate-500 font-medium mt-1">
               8-step transparent workflow from farmer identity to automated DBT payment
