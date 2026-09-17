@@ -34,7 +34,8 @@ export function validateRequest(schema: RequestValidationSchemas | ZodSchema<any
           message: err.message,
           code: err.code
         }));
-        next(new ValidationError('Request validation failed', 'VALIDATION_ERROR', details));
+        const firstMsg = error.errors[0]?.message || 'Request validation failed';
+        next(new ValidationError(firstMsg, 'VALIDATION_ERROR', details));
       } else {
         next(error);
       }

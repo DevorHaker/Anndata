@@ -13,6 +13,13 @@ class AuthService {
     return headers;
   }
 
+  private extractError(data: any, fallback: string): string {
+    if (data?.error?.details && Array.isArray(data.error.details) && data.error.details.length > 0) {
+      return data.error.details.map((d: any) => d.message).join('. ');
+    }
+    return data?.error?.message || fallback;
+  }
+
   async loginWithPassword(mobileNumber: string, passwordInput: string): Promise<AuthResponse> {
     const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
@@ -21,7 +28,7 @@ class AuthService {
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      throw new Error(data.error?.message || 'Login failed. Please check credentials.');
+      throw new Error(this.extractError(data, 'Login failed. Please check credentials.'));
     }
     return data.data;
   }
@@ -42,7 +49,7 @@ class AuthService {
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      throw new Error(data.error?.message || 'Registration failed.');
+      throw new Error(this.extractError(data, 'Registration failed.'));
     }
     return data.data;
   }
@@ -55,7 +62,7 @@ class AuthService {
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      throw new Error(data.error?.message || 'Failed to dispatch OTP.');
+      throw new Error(this.extractError(data, 'Failed to dispatch OTP.'));
     }
     return data.data;
   }
@@ -68,7 +75,7 @@ class AuthService {
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      throw new Error(data.error?.message || 'OTP verification failed.');
+      throw new Error(this.extractError(data, 'OTP verification failed.'));
     }
     return data.data;
   }
