@@ -16,6 +16,7 @@ import {
 } from '../types/domain';
 import { StaffQueueDashboard } from '../components/queue/StaffQueueDashboard';
 import { ProcurementWorkflowStepper } from '../components/procurement/ProcurementWorkflowStepper';
+import { CentreManagerRequestsInbox } from '../components/centre/CentreManagerRequestsInbox';
 import {
   Building2,
   AlertOctagon,
@@ -28,12 +29,13 @@ import {
   Search,
   Activity,
   QrCode,
-  Scale
+  Scale,
+  Inbox
 } from 'lucide-react';
 
 export const CentrePage: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'capacity' | 'disruptions' | 'staff' | 'queue' | 'procurement'>('overview');
+  const [activeTab, setActiveTab] = useState<'requests' | 'overview' | 'capacity' | 'disruptions' | 'staff' | 'queue' | 'procurement'>('requests');
 
   // Centre list and selected centre state
   const [centres, setCentres] = useState<ProcurementCentreDetail[]>([]);
@@ -367,6 +369,16 @@ export const CentrePage: React.FC = () => {
       {/* Tabs */}
       <div className="flex border-b border-slate-200 overflow-x-auto space-x-6">
         <button
+          onClick={() => setActiveTab('requests')}
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            activeTab === 'requests'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          <Inbox className="w-4 h-4" /> Incoming Slot Requests
+        </button>
+        <button
           onClick={() => setActiveTab('overview')}
           className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'overview'
@@ -427,6 +439,15 @@ export const CentrePage: React.FC = () => {
           <Scale className="w-4 h-4" /> Procurement & Weighbridge Operations
         </button>
       </div>
+
+      {/* TAB: Incoming Farmer Procurement Requests */}
+      {activeTab === 'requests' && selectedCentre && (
+        <CentreManagerRequestsInbox
+          centreId={selectedCentre.id}
+          centreName={selectedCentre.name}
+          onNavigateCheckin={() => setActiveTab('queue')}
+        />
+      )}
 
       {/* TAB: Procurement & Weighbridge Operations */}
       {activeTab === 'procurement' && selectedCentre && (

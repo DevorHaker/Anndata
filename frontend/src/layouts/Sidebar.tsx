@@ -11,7 +11,8 @@ import {
   Sparkles,
   Bell,
   WifiOff,
-  GitCompare
+  GitCompare,
+  Inbox
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -39,11 +40,11 @@ export const Sidebar: React.FC = () => {
       );
     } else if (role === 'PROCUREMENT_OFFICER' || role === 'CENTRE_MANAGER') {
       items.push(
+        { to: '/centre', label: 'Centre Manager Dashboard', icon: Inbox, exact: true },
         { to: '/intelligence/staff', label: 'Operations & AI Control', icon: Sparkles },
         { to: '/centre/offline', label: 'Offline Mandi Ops', icon: WifiOff },
         { to: '/admin/sync-conflicts', label: 'Sync Conflicts', icon: GitCompare },
         { to: '/centre/queue', label: 'Mandi Gate Queue', icon: Building2 },
-        { to: '/centre/checkin', label: 'Gate Token Check-in', icon: Ticket },
         { to: '/admin/payments', label: 'DBT Disbursements', icon: CreditCard }
       );
     } else if (role === 'SYSTEM_ADMIN' || role === 'DISTRICT_ADMIN') {

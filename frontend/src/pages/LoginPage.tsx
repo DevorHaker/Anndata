@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LoginForm } from '../components/auth/LoginForm';
-import { Shield, Wheat } from 'lucide-react';
+import { Shield, Wheat, Building2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
@@ -58,7 +58,7 @@ export const LoginPage: React.FC = () => {
               <span className="text-[#0d6e48]">Mock Accounts</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => handleQuickDemoLogin('+919999900001', 'Admin')}
@@ -67,8 +67,21 @@ export const LoginPage: React.FC = () => {
               >
                 <Shield className="w-4 h-4 text-purple-600 shrink-0" />
                 <div>
-                  <div className="font-bold">System Admin</div>
-                  <div className="text-[10px] text-slate-500">+919999900001</div>
+                  <div className="font-bold text-[11px]">System Admin</div>
+                  <div className="text-[9px] text-slate-500">+919999900001</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickDemoLogin('+919999900003', 'CentreManager')}
+                disabled={!!demoLoading}
+                className="flex items-center gap-2 p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-left transition-all text-xs font-medium text-slate-800"
+              >
+                <Building2 className="w-4 h-4 text-[#0d6e48] shrink-0" />
+                <div>
+                  <div className="font-bold text-[11px] text-[#0d6e48]">Centre Manager</div>
+                  <div className="text-[9px] text-emerald-700">+919999900003</div>
                 </div>
               </button>
 
@@ -78,10 +91,10 @@ export const LoginPage: React.FC = () => {
                 disabled={!!demoLoading}
                 className="flex items-center gap-2 p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left transition-all text-xs font-medium text-slate-800"
               >
-                <Wheat className="w-4 h-4 text-[#0d6e48] shrink-0" />
+                <Wheat className="w-4 h-4 text-amber-600 shrink-0" />
                 <div>
-                  <div className="font-bold">Farmer Account</div>
-                  <div className="text-[10px] text-slate-500">+919999900002</div>
+                  <div className="font-bold text-[11px]">Farmer Account</div>
+                  <div className="text-[9px] text-slate-500">+919999900002</div>
                 </div>
               </button>
             </div>
