@@ -26,7 +26,8 @@ export class OtpService {
       }
     }
 
-    const otp = generateOtp();
+    const isMockOrDev = env.SMS_PROVIDER_MODE === 'mock' || env.NODE_ENV === 'development' || env.NODE_ENV === 'test';
+    const otp = isMockOrDev ? '123456' : generateOtp();
     const otpHash = hashString(otp);
 
     if (redis) {
@@ -38,7 +39,7 @@ export class OtpService {
     }
 
     // Secure logging: Never leak raw OTP in production logs!
-    if (env.NODE_ENV === 'development' || env.NODE_ENV === 'test') {
+    if (isMockOrDev) {
       logger.info(`[DEV MOCK OTP DISPATCH] Mobile: ${mobileNumber} | OTP: ${otp}`);
     } else {
       logger.info(`[SMS GATEWAY DISPATCH] OTP dispatched to ${mobileNumber.slice(0, 3)}****${mobileNumber.slice(-4)}`);
@@ -55,8 +56,10 @@ export class OtpService {
     const redis = getRedisClient();
     const now = Date.now();
 
+    const isMockOrDev = env.SMS_PROVIDER_MODE === 'mock' || env.NODE_ENV === 'development' || env.NODE_ENV === 'test';
+
     // Controlled Development / Testing static OTP fallback
-    if ((env.NODE_ENV === 'development' || env.NODE_ENV === 'test') && otpInput === '123456') {
+    if (isMockOrDev && otpInput === '123456') {
       logger.info(`[DEV OTP VERIFIED] Mobile ${mobileNumber} verified using dev test static OTP`);
       return true;
     }
