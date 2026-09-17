@@ -240,8 +240,12 @@ export class AuthService {
       return regResult;
     }
 
-    this.assertAccountLoginAllowed(user);
+    // Reset temporary lock & failed attempts on successful OTP verification (OTP ownership verified)
     await userRepository.resetFailedLogins(user.id);
+    user.lockedUntil = null;
+    user.failedLoginAttempts = 0;
+
+    this.assertAccountLoginAllowed(user);
 
     const permissions = (await userRepository.getRolePermissions(user.roleId)).map((p) => p.code);
     const farmer = await farmerRepository.findByUserId(user.id);
