@@ -13,7 +13,20 @@ export interface FarmerRecord {
   createdAt: Date;
 }
 
-const inMemoryFarmers = new Map<string, FarmerRecord>();
+const INITIAL_DEMO_FARMERS: FarmerRecord[] = [
+  {
+    id: '11111111-1111-4000-8000-111111111111',
+    userId: '10000000-0000-4000-8000-000000000002',
+    farmerReferenceId: 'FARM-2026-9821',
+    firstName: 'Ramesh',
+    lastName: 'Kumar',
+    verificationStatus: 'VERIFIED',
+    status: 'ACTIVE',
+    createdAt: new Date()
+  }
+];
+
+const inMemoryFarmers = new Map<string, FarmerRecord>(INITIAL_DEMO_FARMERS.map((f) => [f.id, f]));
 
 export class FarmerRepository {
   async findByUserId(userId: string, dbClient: PoolClient | typeof pool = pool): Promise<FarmerRecord | null> {

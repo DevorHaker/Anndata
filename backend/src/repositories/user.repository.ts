@@ -31,10 +31,87 @@ const DEFAULT_ROLES = [
   { id: '00000000-0000-4000-8000-000000000005', code: 'DISTRICT_ADMIN', name: 'District Administrator' }
 ];
 
-const inMemoryUsers = new Map<string, UserRecord>();
+const DEFAULT_PASSWORD_HASH = '$2a$10$Mnq.AWbOxRROmIhRTm2N/eJT.WfpqEFx6pX/D//rRFyeg882vKSnS'; // Sp@123456
+
+const INITIAL_DEMO_USERS: UserRecord[] = [
+  {
+    id: '10000000-0000-4000-8000-000000000001',
+    mobileNumber: '+919999900001',
+    passwordHash: DEFAULT_PASSWORD_HASH,
+    roleId: '00000000-0000-4000-8000-000000000001',
+    roleCode: 'SYSTEM_ADMIN',
+    roleName: 'System Administrator',
+    status: 'ACTIVE',
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+    lastLoginAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000002',
+    mobileNumber: '+919999900002',
+    passwordHash: DEFAULT_PASSWORD_HASH,
+    roleId: '00000000-0000-4000-8000-000000000002',
+    roleCode: 'FARMER',
+    roleName: 'Farmer',
+    status: 'ACTIVE',
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+    lastLoginAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000003',
+    mobileNumber: '+919999900003',
+    passwordHash: DEFAULT_PASSWORD_HASH,
+    roleId: '00000000-0000-4000-8000-000000000003',
+    roleCode: 'CENTRE_MANAGER',
+    roleName: 'Centre Manager',
+    status: 'ACTIVE',
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+    lastLoginAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000004',
+    mobileNumber: '+919999900004',
+    passwordHash: DEFAULT_PASSWORD_HASH,
+    roleId: '00000000-0000-4000-8000-000000000004',
+    roleCode: 'PROCUREMENT_OFFICER',
+    roleName: 'Procurement Officer',
+    status: 'ACTIVE',
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+    lastLoginAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000005',
+    mobileNumber: '+919999900005',
+    passwordHash: DEFAULT_PASSWORD_HASH,
+    roleId: '00000000-0000-4000-8000-000000000005',
+    roleCode: 'DISTRICT_ADMIN',
+    roleName: 'District Administrator',
+    status: 'ACTIVE',
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+    lastLoginAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
+
+const inMemoryUsers = new Map<string, UserRecord>(INITIAL_DEMO_USERS.map((u) => [u.id, u]));
 
 export class UserRepository {
   async findByMobileNumber(mobileNumber: string, dbClient: PoolClient | typeof pool = pool): Promise<UserRecord | null> {
+    const formattedMobile = mobileNumber.startsWith('+') ? mobileNumber : `+91${mobileNumber.replace(/^0+/, '')}`;
+
     try {
       const query = `
         SELECT 
@@ -52,16 +129,18 @@ export class UserRepository {
           u.updated_at AS "updatedAt"
         FROM users u
         JOIN roles r ON u.role_id = r.id
-        WHERE u.mobile_number = $1 AND u.deleted_at IS NULL
+        WHERE (u.mobile_number = $1 OR u.mobile_number = $2) AND u.deleted_at IS NULL
       `;
-      const res = await dbClient.query(query, [mobileNumber]);
-      return res.rows[0] || null;
+      const res = await dbClient.query(query, [mobileNumber, formattedMobile]);
+      if (res.rows[0]) return res.rows[0];
     } catch (err) {
-      for (const u of inMemoryUsers.values()) {
-        if (u.mobileNumber === mobileNumber) return u;
-      }
-      return null;
+      // Database unavailable, check memory store below
     }
+
+    for (const u of inMemoryUsers.values()) {
+      if (u.mobileNumber === mobileNumber || u.mobileNumber === formattedMobile) return u;
+    }
+    return null;
   }
 
   async findById(id: string, dbClient: PoolClient | typeof pool = pool): Promise<UserRecord | null> {

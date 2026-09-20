@@ -6,13 +6,14 @@ BEGIN;
 
 -- 1. SYSTEM ROLES
 INSERT INTO roles (id, code, name, description, is_system) VALUES
-  ('00000000-0000-4000-8000-000000000001', 'ADMIN', 'System Administrator', 'Full system management and configuration access', true),
+  ('00000000-0000-4000-8000-000000000001', 'SYSTEM_ADMIN', 'System Administrator', 'Full system management and configuration access', true),
   ('00000000-0000-4000-8000-000000000002', 'FARMER', 'Farmer', 'Registered farmer booking slots and tracking procurement', true),
-  ('00000000-0000-4000-8000-000000000003', 'CENTRE_OPERATOR', 'Centre Operator', 'Manages procurement centre operations and token check-ins', true),
-  ('00000000-0000-4000-8000-000000000004', 'WEIGHBRIDGE_OPERATOR', 'Weighbridge Operator', 'Records gross and tare weights', true),
-  ('00000000-0000-4000-8000-000000000005', 'QUALITY_INSPECTOR', 'Quality Inspector', 'Performs moisture and crop quality inspection', true),
-  ('00000000-0000-4000-8000-000000000006', 'FINANCE_OFFICER', 'Finance Officer', 'Approves and processes DBT payment disbursements', true)
-ON CONFLICT (code) DO NOTHING;
+  ('00000000-0000-4000-8000-000000000003', 'CENTRE_MANAGER', 'Centre Manager', 'Manages procurement centre operations and staff', true),
+  ('00000000-0000-4000-8000-000000000004', 'PROCUREMENT_OFFICER', 'Procurement Officer', 'Procurement officer for mandis', true),
+  ('00000000-0000-4000-8000-000000000005', 'DISTRICT_ADMIN', 'District Administrator', 'District level administration', true),
+  ('00000000-0000-4000-8000-000000000006', 'FINANCE_OFFICER', 'Finance Officer', 'Approves and processes DBT payment disbursements', true),
+  ('00000000-0000-4000-8000-000000000007', 'ADMIN', 'System Administrator', 'Full system management and configuration access', true)
+ON CONFLICT (id) DO UPDATE SET code = EXCLUDED.code, name = EXCLUDED.name;
 
 -- 2. SYSTEM PERMISSIONS
 INSERT INTO permissions (id, code, module, description) VALUES
@@ -67,9 +68,12 @@ INSERT INTO procurement_centres (
 
 -- 7. DEMO USERS
 INSERT INTO users (id, mobile_number, password_hash, role_id, status) VALUES
-  ('10000000-0000-4000-8000-000000000001', '+919999900001', '$2b$10$abcdefghijklmnopqrstuv', '00000000-0000-4000-8000-000000000001', 'ACTIVE'),
-  ('10000000-0000-4000-8000-000000000002', '+919999900002', '$2b$10$abcdefghijklmnopqrstuv', '00000000-0000-4000-8000-000000000002', 'ACTIVE')
-ON CONFLICT (mobile_number) DO NOTHING;
+  ('10000000-0000-4000-8000-000000000001', '+919999900001', '$2a$10$Mnq.AWbOxRROmIhRTm2N/eJT.WfpqEFx6pX/D//rRFyeg882vKSnS', '00000000-0000-4000-8000-000000000001', 'ACTIVE'),
+  ('10000000-0000-4000-8000-000000000002', '+919999900002', '$2a$10$Mnq.AWbOxRROmIhRTm2N/eJT.WfpqEFx6pX/D//rRFyeg882vKSnS', '00000000-0000-4000-8000-000000000002', 'ACTIVE'),
+  ('10000000-0000-4000-8000-000000000003', '+919999900003', '$2a$10$Mnq.AWbOxRROmIhRTm2N/eJT.WfpqEFx6pX/D//rRFyeg882vKSnS', '00000000-0000-4000-8000-000000000003', 'ACTIVE'),
+  ('10000000-0000-4000-8000-000000000004', '+919999900004', '$2a$10$Mnq.AWbOxRROmIhRTm2N/eJT.WfpqEFx6pX/D//rRFyeg882vKSnS', '00000000-0000-4000-8000-000000000004', 'ACTIVE'),
+  ('10000000-0000-4000-8000-000000000005', '+919999900005', '$2a$10$Mnq.AWbOxRROmIhRTm2N/eJT.WfpqEFx6pX/D//rRFyeg882vKSnS', '00000000-0000-4000-8000-000000000005', 'ACTIVE')
+ON CONFLICT (mobile_number) DO UPDATE SET password_hash = EXCLUDED.password_hash, role_id = EXCLUDED.role_id, status = EXCLUDED.status;
 
 -- 8. DEMO FARMER PROFILE
 INSERT INTO farmers (id, user_id, farmer_reference_id, first_name, last_name, verification_status, status) VALUES
