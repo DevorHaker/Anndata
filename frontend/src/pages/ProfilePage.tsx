@@ -4,11 +4,14 @@ import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
 import { Phone, Shield, Calendar, LogOut, CheckCircle2 } from 'lucide-react';
+import { getUserDisplayInfo } from '../utils/userDisplay';
 
 export const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
 
   if (!user) return null;
+
+  const displayInfo = getUserDisplayInfo(user);
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
@@ -44,15 +47,15 @@ export const ProfilePage: React.FC = () => {
         {/* Profile Card */}
         <Card className="md:col-span-1 p-6 text-center space-y-4">
           <div className="w-20 h-20 mx-auto rounded-full bg-[#0d6e48] text-white flex items-center justify-center font-bold text-2xl border-4 border-emerald-100 shadow-md">
-            {user.firstName ? user.firstName[0].toUpperCase() : 'U'}
+            {displayInfo.initial}
           </div>
           <div>
             <h2 className="text-lg font-bold font-serif-header text-slate-900">
-              {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.mobileNumber}
+              {displayInfo.displayName}
             </h2>
             <div className="mt-2 flex items-center justify-center gap-2">
               <Badge variant={getRoleBadgeVariant(user.role)}>
-                {user.roleName || user.role}
+                {displayInfo.roleBadgeLabel}
               </Badge>
               <Badge variant={user.status === 'ACTIVE' ? 'success' : 'error'}>
                 {user.status}
@@ -60,10 +63,10 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
 
-          {user.farmerReferenceId && (
+          {displayInfo.idValue && (
             <div className="p-3 bg-[#e6f7ef] border border-[#b2e8cf] rounded-2xl text-xs space-y-1">
-              <div className="text-[#0d6e48] font-bold uppercase">Farmer ID</div>
-              <div className="font-mono font-bold text-slate-900 text-sm">{user.farmerReferenceId}</div>
+              <div className="text-[#0d6e48] font-bold uppercase tracking-wider">{displayInfo.idLabel}</div>
+              <div className="font-mono font-bold text-slate-900 text-sm">{displayInfo.idValue}</div>
             </div>
           )}
         </Card>

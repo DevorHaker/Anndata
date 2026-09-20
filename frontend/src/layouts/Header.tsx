@@ -4,6 +4,7 @@ import { LogOut, Globe } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LANGUAGES } from '../i18n/translations';
+import { getUserDisplayInfo } from '../utils/userDisplay';
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -51,32 +52,35 @@ export const Header: React.FC = () => {
           </span>
         </button>
 
-        {isAuthenticated && user ? (
-          <div className="flex items-center gap-3 border-l border-slate-200 pl-3">
-            <Link
-              to="/profile"
-              className="flex items-center gap-2 py-1 px-3 bg-emerald-50 hover:bg-emerald-100/80 rounded-xl border border-emerald-200 transition-colors"
-            >
-              <div className="w-6 h-6 rounded-full bg-[#0d6e48] text-white flex items-center justify-center font-bold text-xs">
-                {user.firstName ? user.firstName[0].toUpperCase() : 'U'}
-              </div>
-              <div className="text-left hidden md:block">
-                <div className="text-xs font-semibold text-slate-900">
-                  {user.firstName ? `${user.firstName} ${user.lastName}` : user.mobileNumber}
+        {isAuthenticated && user ? (() => {
+          const displayInfo = getUserDisplayInfo(user);
+          return (
+            <div className="flex items-center gap-3 border-l border-slate-200 pl-3">
+              <Link
+                to="/profile"
+                className="flex items-center gap-2 py-1 px-3 bg-emerald-50 hover:bg-emerald-100/80 rounded-xl border border-emerald-200 transition-colors"
+              >
+                <div className="w-6 h-6 rounded-full bg-[#0d6e48] text-white flex items-center justify-center font-bold text-xs">
+                  {displayInfo.initial}
                 </div>
-                <div className="text-[10px] text-emerald-700 font-mono font-medium">{user.role}</div>
-              </div>
-            </Link>
+                <div className="text-left hidden md:block">
+                  <div className="text-xs font-semibold text-slate-900">
+                    {displayInfo.displayName}
+                  </div>
+                  <div className="text-[10px] text-emerald-700 font-mono font-medium">{displayInfo.roleBadgeLabel}</div>
+                </div>
+              </Link>
 
-            <button
-              onClick={logout}
-              title="Sign Out"
-              className="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        ) : (
+              <button
+                onClick={logout}
+                title="Sign Out"
+                className="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          );
+        })() : (
           <div className="flex items-center gap-2">
             <Link
               to="/register"

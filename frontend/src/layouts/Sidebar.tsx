@@ -15,9 +15,11 @@ import {
   Inbox
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { getUserDisplayInfo } from '../utils/userDisplay';
 
 export const Sidebar: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const displayInfo = user ? getUserDisplayInfo(user) : null;
 
   const getRoleNavItems = () => {
     const items: { to: string; label: string; icon: any; exact?: boolean }[] = [];
@@ -101,10 +103,10 @@ export const Sidebar: React.FC = () => {
 
       <div className="p-3 bg-[#e6f7ef]/50 rounded-2xl border border-[#b2e8cf]/60 text-xs text-slate-600">
         <p className="font-semibold text-slate-900 mb-1 flex items-center justify-between">
-          <span>SIH 2026 Active</span>
+          <span>{displayInfo ? `${displayInfo.sessionBadgeLabel} Active` : 'SmartProcure Active'}</span>
           {user && (
             <span className="text-[10px] px-1.5 py-0.5 bg-[#0d6e48] text-white font-mono rounded-md font-bold">
-              {user.role}
+              {displayInfo ? displayInfo.roleBadgeLabel : user.role}
             </span>
           )}
         </p>
