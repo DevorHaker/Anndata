@@ -22,6 +22,7 @@ import { tokenQueueService, DigitalToken, QRPayload } from '../services/tokenQue
 import { FarmerProcurementStatusCard } from '../components/procurement/FarmerProcurementStatusCard';
 import { procurementServiceUI, ProcurementRecordUI } from '../services/procurement.service';
 import { bookingServiceUI } from '../services/bookingService';
+import { getAiMandiRecommendations, MandiAiRecommendation } from '../utils/aiMandiRecommender';
 import {
   User,
   Wheat,
@@ -34,7 +35,11 @@ import {
   Search,
   PlusCircle,
   QrCode,
-  Scale
+  Scale,
+  Sparkles,
+  Zap,
+  Award,
+  TrendingUp
 } from 'lucide-react';
 
 export const FarmerPage: React.FC = () => {
@@ -497,73 +502,160 @@ export const FarmerPage: React.FC = () => {
             </Button>
           </div>
 
-          {/* Declare Produce Modal */}
-          {showProduceModal && (
-            <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-                <h3 className="text-lg font-bold font-serif-header text-slate-900">Declare Harvest Yield</h3>
-                <form onSubmit={handleDeclareProduce} className="space-y-4">
-                  <Select
-                    label="Target Mandi / Procurement Centre"
-                    value={produceForm.centreId}
-                    onChange={(e) => setProduceForm({ ...produceForm, centreId: e.target.value })}
-                    options={
-                      centres.length > 0
-                        ? centres.map((c) => ({ value: c.id, label: `${c.name} (${c.district})` }))
-                        : [
-                            { value: '33333333-3333-4000-8000-333333333333', label: 'APMC Karnal Central Procurement Hub (Karnal)' },
-                            { value: '33333333-3333-4000-8000-333333333334', label: 'Ludhiana Mandi Hub (Ludhiana)' },
-                            { value: '33333333-3333-4000-8000-333333333335', label: 'Indore MSP Mandi Yard (Indore)' }
-                          ]
-                    }
-                  />
+          {/* Declare Produce & Mandi Selection Modal */}
+          {showProduceModal && (() => {
+            const selectedCropName = crops.find((c) => c.id === produceForm.cropTypeId)?.name;
+            const aiRecs = getAiMandiRecommendations(centres, selectedCropName);
+            const topAiRec = aiRecs.find((r) => r.isTopRecommendation) || aiRecs[0];
+            const selectedAiRec = aiRecs.find((r) => r.centreId === produceForm.centreId) || topAiRec;
 
-                  <Select
-                    label="Crop Type"
-                    value={produceForm.cropTypeId}
-                    onChange={(e) => setProduceForm({ ...produceForm, cropTypeId: e.target.value })}
-                    options={crops.map((c) => ({ value: c.id, label: `${c.name} (${c.category})` }))}
-                  />
-
-                  <Select
-                    label="Harvest Season"
-                    value={produceForm.harvestSeason}
-                    onChange={(e) => setProduceForm({ ...produceForm, harvestSeason: e.target.value })}
-                    options={[
-                      { value: 'RABI_2026', label: 'Rabi 2026' },
-                      { value: 'KHARIF_2026', label: 'Kharif 2026' },
-                      { value: 'ZAID_2026', label: 'Zaid 2026' }
-                    ]}
-                  />
-
-                  <Input
-                    label="Estimated Yield (KG)"
-                    type="number"
-                    value={produceForm.estimatedYieldKg}
-                    onChange={(e) => setProduceForm({ ...produceForm, estimatedYieldKg: Number(e.target.value) })}
-                    required
-                  />
-
-                  <Input
-                    label="Declared Quantity for Sale (KG)"
-                    type="number"
-                    value={produceForm.declaredQuantityKg}
-                    onChange={(e) => setProduceForm({ ...produceForm, declaredQuantityKg: Number(e.target.value) })}
-                    required
-                  />
-
-                  <div className="flex justify-end gap-3 pt-2">
-                    <Button variant="outline" type="button" onClick={() => setShowProduceModal(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" isLoading={saving}>
-                      Submit Declaration
-                    </Button>
+            return (
+              <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="bg-white border border-slate-200 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto font-sans">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                      <h3 className="text-lg font-bold font-serif-header text-slate-900 flex items-center gap-2">
+                        <Wheat className="w-5 h-5 text-[#0d6e48]" /> Declare Produce & Select Mandi
+                      </h3>
+                      <p className="text-xs text-slate-500 font-medium">
+                        Register harvest yield and route your procurement request to the optimal Mandi.
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-emerald-50 text-[#0d6e48] border border-[#b2e8cf] text-[10px] font-mono font-bold rounded-full flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-amber-500" /> AI Mandi Match Active
+                    </span>
                   </div>
-                </form>
+
+                  {/* AI Mandi Recommendation Hero Box */}
+                  {topAiRec && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-[#063b26] via-[#0d6e48] to-slate-900 text-white border border-emerald-400/40 shadow-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider">
+                          <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+                          <span>Smart AI Mandi Recommendation</span>
+                        </div>
+                        <span className="px-2.5 py-0.5 bg-emerald-400/20 text-emerald-200 border border-emerald-400/30 text-xs font-mono font-bold rounded-full">
+                          {topAiRec.matchScore}% Match Rate
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="space-y-1">
+                          <h4 className="font-bold text-base text-white font-serif-header flex items-center gap-2">
+                            {topAiRec.centreName}
+                            <span className="text-[10px] px-1.5 py-0.5 bg-emerald-500/30 text-emerald-200 rounded font-mono">
+                              {topAiRec.district}
+                            </span>
+                          </h4>
+                          <p className="text-xs text-slate-200 font-medium leading-relaxed">
+                            {topAiRec.reasonText}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setProduceForm({ ...produceForm, centreId: topAiRec.centreId })}
+                          className="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-xl transition-all shrink-0 flex items-center gap-1.5 shadow-md self-start sm:self-center"
+                        >
+                          <Zap className="w-4 h-4 text-slate-950" /> Auto-Select AI Top Choice
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-emerald-700/60 text-[11px] font-mono text-slate-200">
+                        <div>📍 Proximity: <span className="text-white font-bold">{topAiRec.distanceKm} km</span></div>
+                        <div>⏱️ Gate Delay: <span className="text-emerald-300 font-bold">~{topAiRec.estimatedWaitMinutes} mins</span></div>
+                        <div>⚡ Capacity: <span className="text-amber-300 font-bold">{topAiRec.capacityAvailablePercent}% Free</span></div>
+                      </div>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleDeclareProduce} className="space-y-4">
+                    <div>
+                      <Select
+                        label="Target Mandi / Procurement Centre (AI Sorted)"
+                        value={produceForm.centreId}
+                        onChange={(e) => setProduceForm({ ...produceForm, centreId: e.target.value })}
+                        options={aiRecs.map((rec) => ({
+                          value: rec.centreId,
+                          label: `${rec.centreName} (${rec.district}) — ${
+                            rec.isTopRecommendation
+                              ? `✨ AI Top Choice (${rec.matchScore}% Match, ${rec.distanceKm} km)`
+                              : `${rec.matchScore}% Match (${rec.distanceKm} km, ~${rec.estimatedWaitMinutes}m wait)`
+                          }`
+                        }))}
+                      />
+                    </div>
+
+                    {/* Selected Mandi Intelligence Badge */}
+                    {selectedAiRec && (
+                      <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-2xl text-xs space-y-1">
+                        <div className="flex items-center justify-between font-bold text-slate-900">
+                          <span className="flex items-center gap-1 text-[#0d6e48]">
+                            <Building2 className="w-4 h-4" /> Selected Mandi: {selectedAiRec.centreName}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 bg-[#0d6e48] text-white rounded font-bold">
+                            {selectedAiRec.matchScore}% AI Score
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-slate-600 text-[11px] font-medium pt-1">
+                          <span>📍 Distance: <strong>{selectedAiRec.distanceKm} km</strong></span>
+                          <span>⏱️ Est. Wait: <strong>~{selectedAiRec.estimatedWaitMinutes} mins</strong></span>
+                          <span>⚡ Status: <strong>{selectedAiRec.operationalStatus}</strong></span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Select
+                        label="Crop Type"
+                        value={produceForm.cropTypeId}
+                        onChange={(e) => setProduceForm({ ...produceForm, cropTypeId: e.target.value })}
+                        options={crops.map((c) => ({ value: c.id, label: `${c.name} (${c.category})` }))}
+                      />
+
+                      <Select
+                        label="Harvest Season"
+                        value={produceForm.harvestSeason}
+                        onChange={(e) => setProduceForm({ ...produceForm, harvestSeason: e.target.value })}
+                        options={[
+                          { value: 'RABI_2026', label: 'Rabi 2026' },
+                          { value: 'KHARIF_2026', label: 'Kharif 2026' },
+                          { value: 'ZAID_2026', label: 'Zaid 2026' }
+                        ]}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Input
+                        label="Estimated Total Yield (KG)"
+                        type="number"
+                        value={produceForm.estimatedYieldKg}
+                        onChange={(e) => setProduceForm({ ...produceForm, estimatedYieldKg: Number(e.target.value) })}
+                        required
+                      />
+
+                      <Input
+                        label="Declared Quantity for Sale (KG)"
+                        type="number"
+                        value={produceForm.declaredQuantityKg}
+                        onChange={(e) => setProduceForm({ ...produceForm, declaredQuantityKg: Number(e.target.value) })}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                      <Button variant="outline" type="button" onClick={() => setShowProduceModal(false)}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" isLoading={saving} className="bg-[#0d6e48] hover:bg-[#095235]">
+                        <Sparkles className="w-4 h-4 mr-1.5 text-amber-300 inline" /> Confirm & Send to Mandi Manager
+                      </Button>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {produceList.map((item) => (
@@ -641,6 +733,18 @@ export const FarmerPage: React.FC = () => {
                     <span>Phone: {c.contactPhone || '+91 1800-180-1551'}</span>
                     <span className="text-[#0d6e48] font-bold">Eligible for Slot Booking</span>
                   </div>
+
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setProduceForm((prev) => ({ ...prev, centreId: c.id }));
+                      setShowProduceModal(true);
+                      setActiveTab('produce');
+                    }}
+                    className="w-full mt-2 bg-[#0d6e48] hover:bg-[#095235] text-white"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 mr-1 text-amber-300 inline" /> Select {c.name} & Declare Harvest
+                  </Button>
                 </div>
               </Card>
             ))}
