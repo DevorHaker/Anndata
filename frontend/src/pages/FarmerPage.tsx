@@ -21,6 +21,7 @@ import { LiveQueueTrackerCard } from '../components/queue/LiveQueueTrackerCard';
 import { tokenQueueService, DigitalToken, QRPayload } from '../services/tokenQueue.service';
 import { FarmerProcurementStatusCard } from '../components/procurement/FarmerProcurementStatusCard';
 import { procurementServiceUI, ProcurementRecordUI } from '../services/procurement.service';
+import { bookingServiceUI } from '../services/bookingService';
 import {
   User,
   Wheat,
@@ -90,6 +91,7 @@ export const FarmerPage: React.FC = () => {
   const [showProduceModal, setShowProduceModal] = useState(false);
   const [produceForm, setProduceForm] = useState({
     cropTypeId: '',
+    centreId: '',
     harvestSeason: 'RABI_2026',
     estimatedYieldKg: 10000,
     declaredQuantityKg: 8000
@@ -131,15 +133,22 @@ export const FarmerPage: React.FC = () => {
         }
         setProduceList(produceData);
         setCrops(cropData);
-        if (cropData.length > 0) {
-          setProduceForm((prev) => ({ ...prev, cropTypeId: cropData[0].id }));
-        }
 
         // Fetch nearby centres in district
         const centreResult = await centreService.listCentres({
           district: profileData?.profile?.district || 'Karnal'
-        });
-        setCentres(centreResult.data || []);
+        }).catch(() => ({ data: [] }));
+
+        const centresList = centreResult.data || [];
+        setCentres(centresList);
+
+        if (cropData.length > 0) {
+          setProduceForm((prev) => ({
+            ...prev,
+            cropTypeId: cropData[0].id,
+            centreId: prev.centreId || (centresList.length > 0 ? centresList[0].id : '')
+          }));
+        }
       } else {
         const [cropData, searchResult] = await Promise.all([
           farmerService.getCropTypes().catch(() => []),
@@ -189,6 +198,7 @@ export const FarmerPage: React.FC = () => {
     setSaving(true);
     setError(null);
     try {
+      // 1. Register produce declaration record
       const created = await farmerService.addMyProduce({
         cropTypeId: produceForm.cropTypeId,
         harvestSeason: produceForm.harvestSeason,
@@ -196,8 +206,31 @@ export const FarmerPage: React.FC = () => {
         declaredQuantityKg: Number(produceForm.declaredQuantityKg)
       });
       setProduceList((prev) => [created, ...prev]);
+
+      // 2. Submit procurement booking request for the selected Mandi
+      const selectedCentre = centres.find((c) => c.id === produceForm.centreId);
+      const selectedCrop = crops.find((c) => c.id === produceForm.cropTypeId);
+
+      const targetCentreId = produceForm.centreId || (selectedCentre?.id || '33333333-3333-4000-8000-333333333333');
+      const targetCentreName = selectedCentre?.name || 'APMC Karnal Central Procurement Hub';
+
+      const bookingReq = await bookingServiceUI.createBooking({
+        farmerId: farmer?.id || user?.id,
+        farmerName: farmer && farmer.firstName ? `${farmer.firstName} ${farmer.lastName}` : (user && user.firstName ? `${user.firstName} ${user.lastName}` : 'Ramesh Kumar'),
+        farmerMobile: user?.mobileNumber || '+91 9999900002',
+        farmerReferenceId: farmer?.farmerReferenceId || user?.farmerReferenceId || 'FRM-2026-8812',
+        centreId: targetCentreId,
+        centreName: targetCentreName,
+        cropTypeId: produceForm.cropTypeId,
+        cropName: selectedCrop?.name || 'Paddy (Grade A)',
+        declaredWeightKg: Number(produceForm.declaredQuantityKg),
+        harvestSeason: produceForm.harvestSeason
+      });
+
       setShowProduceModal(false);
-      setSuccessMsg('Crop declaration created successfully!');
+      setSuccessMsg(
+        `Produce declared! Procurement slot request '${bookingReq.bookingReferenceId}' sent to Centre Manager at ${targetCentreName}.`
+      );
     } catch (err: any) {
       setError(err.message || 'Failed to submit produce declaration.');
     } finally {
@@ -470,6 +503,21 @@ export const FarmerPage: React.FC = () => {
               <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
                 <h3 className="text-lg font-bold font-serif-header text-slate-900">Declare Harvest Yield</h3>
                 <form onSubmit={handleDeclareProduce} className="space-y-4">
+                  <Select
+                    label="Target Mandi / Procurement Centre"
+                    value={produceForm.centreId}
+                    onChange={(e) => setProduceForm({ ...produceForm, centreId: e.target.value })}
+                    options={
+                      centres.length > 0
+                        ? centres.map((c) => ({ value: c.id, label: `${c.name} (${c.district})` }))
+                        : [
+                            { value: '33333333-3333-4000-8000-333333333333', label: 'APMC Karnal Central Procurement Hub (Karnal)' },
+                            { value: '33333333-3333-4000-8000-333333333334', label: 'Ludhiana Mandi Hub (Ludhiana)' },
+                            { value: '33333333-3333-4000-8000-333333333335', label: 'Indore MSP Mandi Yard (Indore)' }
+                          ]
+                    }
+                  />
+
                   <Select
                     label="Crop Type"
                     value={produceForm.cropTypeId}
