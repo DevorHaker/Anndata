@@ -110,7 +110,7 @@ export const FarmerPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      if (user?.role === 'FARMER' || user?.farmerId) {
+      if (user?.role === 'FARMER') {
         const [profileData, produceData, cropData, procurementsData] = await Promise.all([
           farmerService.getMyProfile().catch(() => null),
           farmerService.getMyProduce().catch(() => []),
@@ -155,6 +155,7 @@ export const FarmerPage: React.FC = () => {
           }));
         }
       } else {
+        // Manager or Admin role viewing farmer registry
         const [cropData, searchResult] = await Promise.all([
           farmerService.getCropTypes().catch(() => []),
           farmerService.searchFarmers({ search: searchQuery }).catch(() => ({ data: [] }))
@@ -289,30 +290,40 @@ export const FarmerPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-3">
               <div className="p-3 bg-[#e6f7ef] border border-[#b2e8cf] rounded-2xl text-[#0d6e48]">
-                <User className="w-7 h-7" />
+                {user?.role === 'FARMER' ? <User className="w-7 h-7" /> : <ShieldCheck className="w-7 h-7 text-[#0d6e48]" />}
               </div>
               <div>
                 <h1 className="text-2xl font-bold font-serif-header text-slate-900 flex items-center gap-2">
-                  {farmer ? `${farmer.firstName} ${farmer.lastName}` : 'Farmer Management Portal'}
+                  {user?.role === 'FARMER'
+                    ? farmer ? `${farmer.firstName} ${farmer.lastName}` : 'Farmer Workspace'
+                    : 'Farmer Registry Oversight & Quotas'}
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium flex flex-wrap items-center gap-2 mt-0.5">
-                  {farmer && (
+                  {user?.role === 'FARMER' && farmer && (
                     <>
                       <span className="font-mono font-bold text-[#0d6e48]">Ref ID: {farmer.farmerReferenceId}</span>
                       <span>•</span>
                       <span>Mobile: {user?.mobileNumber}</span>
                     </>
                   )}
-                  {!farmer && <span>Manage farmer profiles, land verification, and crop declarations</span>}
+                  {user?.role !== 'FARMER' && (
+                    <span>Operational Jurisdiction: Karnal District • Centre Manager Registry Control</span>
+                  )}
                 </p>
               </div>
             </div>
           </div>
 
-          {farmer && (
+          {user?.role === 'FARMER' && farmer && (
             <div className="flex items-center gap-3">
               {getVerificationBadge(farmer.verificationStatus)}
               <Badge variant={farmer.status === 'ACTIVE' ? 'success' : 'danger'}>{farmer.status}</Badge>
+            </div>
+          )}
+
+          {user?.role !== 'FARMER' && (
+            <div className="flex items-center gap-2">
+              <Badge variant="warning">Centre Manager Access</Badge>
             </div>
           )}
         </div>
@@ -335,7 +346,7 @@ export const FarmerPage: React.FC = () => {
 
       {/* Navigation Tabs */}
       <div className="flex border-b border-slate-200 overflow-x-auto space-x-6">
-        {(user?.role === 'FARMER' || user?.farmerId) && (
+        {user?.role === 'FARMER' ? (
           <>
             <button
               onClick={() => setActiveTab('profile')}
@@ -388,20 +399,12 @@ export const FarmerPage: React.FC = () => {
               <Scale className="w-4 h-4" /> Procurement History ({procurementList.length})
             </button>
           </>
-        )}
-        {(user?.role === 'SYSTEM_ADMIN' ||
-          user?.role === 'DISTRICT_ADMIN' ||
-          user?.role === 'ADMIN' ||
-          user?.role === 'CENTRE_MANAGER') && (
+        ) : (
           <button
             onClick={() => setActiveTab('admin')}
-            className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
-              activeTab === 'admin'
-                ? 'border-[#0d6e48] text-[#0d6e48]'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
-            }`}
+            className="pb-3 text-xs font-bold flex items-center gap-2 border-b-2 border-[#0d6e48] text-[#0d6e48] whitespace-nowrap"
           >
-            <ShieldCheck className="w-4 h-4" /> Admin Farmer Registry
+            <ShieldCheck className="w-4 h-4" /> District Farmer Registry Oversight
           </button>
         )}
       </div>

@@ -7,20 +7,34 @@ import { useAuth } from '../context/AuthContext';
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginWithPassword } = useAuth();
+  const { user, loginWithPassword } = useAuth();
   const from = (location.state as any)?.from?.pathname || '/';
 
   const [demoLoading, setDemoLoading] = useState<string | null>(null);
 
   const handleSuccess = () => {
-    navigate(from, { replace: true });
+    if (from && from !== '/') {
+      navigate(from, { replace: true });
+    } else {
+      if (user?.role === 'CENTRE_MANAGER' || user?.role === 'PROCUREMENT_OFFICER') {
+        navigate('/centre', { replace: true });
+      } else if (user?.role === 'SYSTEM_ADMIN' || user?.role === 'ADMIN' || user?.role === 'DISTRICT_ADMIN') {
+        navigate('/centre', { replace: true });
+      } else {
+        navigate('/profile', { replace: true });
+      }
+    }
   };
 
   const handleQuickDemoLogin = async (mobile: string, roleName: string) => {
     setDemoLoading(roleName);
     try {
       await loginWithPassword(mobile, 'Sp@123456');
-      navigate(from, { replace: true });
+      if (roleName === 'Manager' || roleName === 'Admin') {
+        navigate('/centre', { replace: true });
+      } else {
+        navigate('/profile', { replace: true });
+      }
     } catch (err) {
       // Fallback
     } finally {
