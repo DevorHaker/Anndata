@@ -51,7 +51,7 @@ export const HomePage: React.FC = () => {
         { label: "Registration Speed", val: "< 2 mins" }
       ],
       actionText: t('bookings'),
-      actionPath: "/register"
+      actionPath: "/farmer/bookings"
     },
     {
       id: 1,
@@ -66,7 +66,7 @@ export const HomePage: React.FC = () => {
         { label: "Avg Mandi Load", val: "42%" }
       ],
       actionText: t('tokenQueue'),
-      actionPath: "/centres"
+      actionPath: "/centre/queue"
     },
     {
       id: 2,
@@ -169,7 +169,7 @@ export const HomePage: React.FC = () => {
             {/* CTA Action Buttons */}
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
-                to="/register"
+                to="/farmer/bookings"
                 className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#0d6e48] hover:bg-[#095235] text-white text-sm font-semibold rounded-2xl transition shadow-lg shadow-emerald-950/10 hover:shadow-xl hover:translate-y-[-1px]"
               >
                 <span>{t('bookings')}</span>
@@ -177,7 +177,7 @@ export const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                to="/centres"
+                to="/centre/queue"
                 className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#e6f7ef] hover:bg-[#d1f2e2] text-[#0d6e48] border border-[#b2e8cf] text-sm font-semibold rounded-2xl transition"
               >
                 <span>{t('tokenQueue')}</span>
@@ -340,7 +340,7 @@ export const HomePage: React.FC = () => {
 
             <div className="pt-2">
               <Link
-                to="/register"
+                to="/farmer/bookings"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#f59e0b] hover:bg-[#d97706] text-white font-bold text-xs rounded-full shadow-lg shadow-amber-500/20 transition-all hover:scale-105"
               >
                 <span>{t('confirmLanguage')}</span>
@@ -524,7 +524,7 @@ export const HomePage: React.FC = () => {
                   <div className="font-bold text-slate-900">{selectedMandi}</div>
                 </div>
                 <Link
-                  to="/register"
+                  to="/farmer/bookings"
                   className="px-4 py-2 bg-[#0d6e48] hover:bg-[#095235] text-white font-bold text-xs rounded-xl shadow-md transition"
                 >
                   {t('bookings')} →

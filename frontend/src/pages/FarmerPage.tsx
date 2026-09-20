@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { farmerService } from '../services/farmerService';
 import { centreService } from '../services/centreService';
@@ -37,7 +38,20 @@ import {
 
 export const FarmerPage: React.FC = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'profile' | 'produce' | 'centres' | 'admin' | 'tokens' | 'procurements'>('profile');
+
+  useEffect(() => {
+    if (location.pathname.includes('bookings') || location.pathname.includes('centres')) {
+      setActiveTab('centres');
+    } else if (location.pathname.includes('tokens')) {
+      setActiveTab('tokens');
+    } else if (location.pathname.includes('produce')) {
+      setActiveTab('produce');
+    } else if (location.pathname.includes('procurements')) {
+      setActiveTab('procurements');
+    }
+  }, [location.pathname]);
   const [token, setToken] = useState<DigitalToken | null>(null);
   const [qrPayload, setQrPayload] = useState<QRPayload | null>(null);
 
