@@ -174,3 +174,31 @@ bookingsRouter.post(
     }
   }
 );
+
+/**
+ * POST /api/v1/bookings/:id/approve
+ * Approve booking / procurement slot request by Centre Manager
+ */
+bookingsRouter.post(
+  '/:id/approve',
+  authenticate,
+  authorizeRole(['CENTRE_MANAGER', 'PROCUREMENT_OFFICER', 'DISTRICT_ADMIN', 'SYSTEM_ADMIN', 'ADMIN']),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = (req as any).user;
+      const approved = await bookingService.approveBooking(
+        req.params.id,
+        user.sub || user.id,
+        user.role
+      );
+
+      res.status(200).json({
+        success: true,
+        data: approved,
+        message: 'Procurement slot request approved successfully and notification sent to farmer.'
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);

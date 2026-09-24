@@ -6,6 +6,7 @@ import { quantityWorkloadModel } from './recommendation/QuantityWorkloadModel';
 import { BookingRecord, BookingStatus } from '../types/scheduling';
 import { AppError, NotFoundError, ValidationError, ConflictError, ForbiddenError } from '../utils/errors';
 import { auditService } from './audit.service';
+import { notificationService } from './notification/notification.service';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface CreateBookingParams {
@@ -128,6 +129,19 @@ export class BookingService {
     };
 
     const saved = await bookingRepository.createBooking(newBooking, actorId, actorRole);
+
+    // Notify Centre Manager in notification box
+    try {
+      await notificationService.notifyProcurementRequestSubmitted({
+        farmerName: farmer.firstName ? `${farmer.firstName} ${farmer.lastName}` : 'Farmer',
+        bookingReferenceId,
+        cropName: cropTypeId,
+        quantityKg: declaredWeightKg,
+        centreName: centre.name
+      });
+    } catch (e) {
+      // Non-blocking notification dispatch fallback
+    }
 
     await auditService.recordAudit({
       actorId,
@@ -282,6 +296,53 @@ export class BookingService {
     });
 
     return rescheduled!;
+  }
+
+  async approveBooking(
+    bookingId: string,
+    actorId: string,
+    actorRole: string
+  ): Promise<BookingRecord> {
+    const booking = await bookingRepository.findBookingById(bookingId);
+    if (!booking) {
+      throw new NotFoundError(`Booking '${bookingId}' not found.`);
+    }
+
+    const updated = await bookingRepository.updateBookingStatus(
+      bookingId,
+      'CONFIRMED',
+      actorId,
+      actorRole,
+      'Approved by Centre Manager'
+    );
+
+    const farmer = await farmerDomainRepository.findFarmerById(booking.farmerId);
+    const centre = await centreDomainRepository.getCentreById(booking.centreId);
+
+    // Notify Farmer about request approval
+    try {
+      await notificationService.notifyProcurementRequestApproved({
+        farmerUserId: farmer?.userId || booking.farmerId,
+        bookingReferenceId: booking.bookingReferenceId,
+        cropName: booking.cropTypeId,
+        quantityKg: booking.declaredWeightKg,
+        centreName: centre?.name || 'Procurement Centre'
+      });
+    } catch (e) {
+      // Non-blocking notification dispatch fallback
+    }
+
+    await auditService.recordAudit({
+      actorId,
+      actorRole,
+      action: 'APPROVE_BOOKING',
+      entityType: 'BOOKING',
+      entityId: bookingId,
+      ipAddress: '127.0.0.1',
+      afterState: { bookingId, status: 'CONFIRMED' }
+    });
+
+    return updated!;
   }
 
   async getFarmerBookings(farmerId: string): Promise<BookingRecord[]> {

@@ -47,9 +47,17 @@ describe('Phase 7: Dynamic Procurement Slot & Recommendation Engine Test Suite',
     });
     adminToken = resAdmin.body.data.tokens.accessToken;
 
-    // 3. Get candidate centre ID
+    // 3. Get candidate centre ID (ensure normal operating status with no active disruptions)
     const centresRes = await centreDomainRepository.listCentres();
-    centreId = centresRes.data[0].id;
+    for (const c of centresRes.data) {
+      const disruptions = await centreDomainRepository.listDisruptions(c.id);
+      const active = disruptions.filter((d: any) => d.status !== 'RESOLVED' && (d.severity === 'CRITICAL' || d.severity === 'HIGH'));
+      if (active.length === 0) {
+        centreId = c.id;
+        break;
+      }
+    }
+    if (!centreId && centresRes.data.length > 0) centreId = centresRes.data[0].id;
   });
 
   // -------------------------------------------------------------

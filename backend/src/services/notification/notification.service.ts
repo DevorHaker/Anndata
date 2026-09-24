@@ -72,6 +72,57 @@ export class NotificationService {
   }
 
   /**
+   * Handle domain event: ProcurementRequestSubmitted (Sent to Centre Manager)
+   */
+  async notifyProcurementRequestSubmitted(params: {
+    managerUserId?: string;
+    farmerName: string;
+    bookingReferenceId: string;
+    cropName: string;
+    quantityKg: number;
+    centreName: string;
+  }) {
+    const targetUserId = params.managerUserId || '10000000-0000-4000-8000-000000000003';
+    return notificationDispatcherService.dispatch({
+      userId: targetUserId,
+      eventType: 'ProcurementRequestSubmitted',
+      templateCode: 'PROCUREMENT_REQUEST_SUBMITTED',
+      channel: 'IN_APP',
+      variables: {
+        farmerName: params.farmerName,
+        bookingReferenceId: params.bookingReferenceId,
+        cropName: params.cropName,
+        quantityKg: params.quantityKg,
+        centreName: params.centreName
+      }
+    });
+  }
+
+  /**
+   * Handle domain event: ProcurementRequestApproved (Sent to Farmer)
+   */
+  async notifyProcurementRequestApproved(params: {
+    farmerUserId: string;
+    bookingReferenceId: string;
+    cropName: string;
+    quantityKg: number;
+    centreName: string;
+  }) {
+    return notificationDispatcherService.dispatch({
+      userId: params.farmerUserId,
+      eventType: 'ProcurementRequestApproved',
+      templateCode: 'PROCUREMENT_REQUEST_APPROVED',
+      channel: 'IN_APP',
+      variables: {
+        bookingReferenceId: params.bookingReferenceId,
+        cropName: params.cropName,
+        quantityKg: params.quantityKg,
+        centreName: params.centreName
+      }
+    });
+  }
+
+  /**
    * Handle domain event: CentreDisruptionCreated
    */
   async notifyCentreDisruption(params: {

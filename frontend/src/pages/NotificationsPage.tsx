@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { apiClient as api } from '../services/apiClient';
-import { Bell, Check, CheckCheck, Settings, ShieldCheck, Smartphone, MessageSquare } from 'lucide-react';
+import { notificationServiceUI, NotificationItem } from '../services/notificationService';
+import { Bell, Check, CheckCheck, Settings, ShieldCheck, Smartphone, MessageSquare, RefreshCw } from 'lucide-react';
 import { voiceAssistanceService } from '../services/voiceAssistance';
-
-export interface NotificationItem {
-  id: string;
-  title: string;
-  message: string;
-  channel: string;
-  status: string;
-  readAt?: string | null;
-  createdAt: string;
-}
 
 export const NotificationsPage: React.FC = () => {
   const { t, language } = useLanguage();
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'inbox' | 'preferences'>('inbox');
@@ -31,17 +24,15 @@ export const NotificationsPage: React.FC = () => {
   useEffect(() => {
     fetchNotifications();
     fetchPreferences();
-  }, []);
+  }, [user]);
 
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const res: any = await api.get('/notifications');
-      if (res && res.data) {
-        setNotifications(res.data);
-      }
+      const items = await notificationServiceUI.getNotifications(user?.role, user?.id);
+      setNotifications(items);
     } catch (err) {
-      console.warn('Failed to load notifications');
+      console.warn('Failed to load notifications', err);
     } finally {
       setLoading(false);
     }
@@ -60,7 +51,7 @@ export const NotificationsPage: React.FC = () => {
 
   const markAsRead = async (id: string) => {
     try {
-      await api.patch(`/notifications/${id}/read`);
+      await notificationServiceUI.markAsRead(id);
       setNotifications((prev) =>
         prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n))
       );
@@ -71,7 +62,7 @@ export const NotificationsPage: React.FC = () => {
 
   const markAllAsRead = async () => {
     try {
-      await api.post('/notifications/read-all');
+      await notificationServiceUI.markAllAsRead();
       setNotifications((prev) =>
         prev.map((n) => ({ ...n, readAt: new Date().toISOString() }))
       );

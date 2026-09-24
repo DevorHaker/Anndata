@@ -71,12 +71,17 @@ export const CentreManagerRequestsInbox: React.FC<CentreManagerRequestsInboxProp
     }
   };
 
-  const handleApproveRequest = (req: BookingRecordUI) => {
-    setRequests((prev) =>
-      prev.map((r) => (r.id === req.id ? { ...r, status: 'CONFIRMED' } : r))
-    );
-    setActionSuccess(`Procurement slot request '${req.bookingReferenceId}' for ${req.farmerName} approved & gate pass token issued!`);
-    setTimeout(() => setActionSuccess(null), 4000);
+  const handleApproveRequest = async (req: BookingRecordUI) => {
+    try {
+      await bookingServiceUI.approveBooking(req.id, req);
+      setRequests((prev) =>
+        prev.map((r) => (r.id === req.id ? { ...r, status: 'CONFIRMED' } : r))
+      );
+      setActionSuccess(`Procurement slot request '${req.bookingReferenceId}' for ${req.farmerName} approved & notification sent to farmer inbox!`);
+      setTimeout(() => setActionSuccess(null), 4000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to approve request.');
+    }
   };
 
   const handleConfirmReject = async (e: React.FormEvent) => {

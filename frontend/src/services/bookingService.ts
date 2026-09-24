@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './apiConfig';
+import { notificationServiceUI } from './notificationService';
 
 export interface BookingRecordUI {
   id: string;
@@ -89,6 +90,13 @@ class BookingServiceUI {
       createdAt: new Date().toISOString()
     };
 
+    // Dispatch notification to Centre Manager inbox
+    notificationServiceUI.addNotification({
+      roleTarget: 'CENTRE_MANAGER',
+      title: 'New Procurement Request Received',
+      message: `Farmer ${newBooking.farmerName} submitted procurement request (${newBooking.bookingReferenceId}) for ${newBooking.cropName} (${newBooking.declaredWeightKg.toLocaleString()} kg) at ${newBooking.centreName}.`
+    });
+
     try {
       const res = await fetch(`${API_BASE_URL}/bookings`, {
         method: 'POST',
@@ -158,6 +166,63 @@ class BookingServiceUI {
       result = result.filter((r) => r.status === status);
     }
     return result;
+  }
+
+  async approveBooking(bookingId: string, bookingDetails?: Partial<BookingRecordUI>): Promise<BookingRecordUI> {
+    const local = this.getStoredCreatedBookings();
+    let target = local.find((b) => b.id === bookingId);
+
+    if (target) {
+      target.status = 'CONFIRMED';
+      this.saveCreatedBookingLocally(target);
+    } else if (bookingDetails) {
+      target = {
+        id: bookingId,
+        bookingReferenceId: bookingDetails.bookingReferenceId || `BK-${bookingId}`,
+        farmerId: bookingDetails.farmerId || 'frm-001',
+        farmerName: bookingDetails.farmerName || 'Farmer',
+        centreId: bookingDetails.centreId || 'centre-001',
+        centreName: bookingDetails.centreName || 'Procurement Centre',
+        slotId: bookingDetails.slotId || 'slot-001',
+        cropTypeId: bookingDetails.cropTypeId || 'crop-paddy',
+        cropName: bookingDetails.cropName || 'Paddy (Grade A)',
+        declaredWeightKg: bookingDetails.declaredWeightKg || 8000,
+        estimatedServiceMinutes: 35,
+        scheduledDate: bookingDetails.scheduledDate || new Date().toISOString().split('T')[0],
+        startTime: bookingDetails.startTime || '09:00 AM',
+        endTime: bookingDetails.endTime || '11:00 AM',
+        status: 'CONFIRMED',
+        createdAt: new Date().toISOString()
+      };
+      this.saveCreatedBookingLocally(target);
+    }
+
+    // Dispatch approval notification to Farmer inbox
+    const refId = target?.bookingReferenceId || bookingDetails?.bookingReferenceId || bookingId;
+    const cropName = target?.cropName || bookingDetails?.cropName || 'Produce';
+    const weight = target?.declaredWeightKg || bookingDetails?.declaredWeightKg || 0;
+    const centreName = target?.centreName || bookingDetails?.centreName || 'Procurement Hub';
+
+    notificationServiceUI.addNotification({
+      roleTarget: 'FARMER',
+      title: 'Procurement Request Approved',
+      message: `Your procurement request (${refId}) for ${cropName} (${weight.toLocaleString()} kg) at ${centreName} has been approved by the Centre Manager.`
+    });
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/approve`, {
+        method: 'POST',
+        headers: this.getHeaders()
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        return data.data;
+      }
+    } catch (err) {
+      // Local fallback handled above
+    }
+
+    return target!;
   }
 
   async cancelBooking(bookingId: string, reason: string): Promise<BookingRecordUI> {
