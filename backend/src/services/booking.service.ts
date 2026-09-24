@@ -3,6 +3,8 @@ import { slotRepository } from '../repositories/slot.repository';
 import { centreDomainRepository } from '../repositories/centreDomain.repository';
 import { farmerDomainRepository } from '../repositories/farmerDomain.repository';
 import { quantityWorkloadModel } from './recommendation/QuantityWorkloadModel';
+import { landRecordsService } from './landRecords.service';
+import { generateCryptographicGatePass } from '../utils/cryptographicGatePass';
 import { BookingRecord, BookingStatus } from '../types/scheduling';
 import { AppError, NotFoundError, ValidationError, ConflictError, ForbiddenError } from '../utils/errors';
 import { auditService } from './audit.service';
@@ -15,6 +17,8 @@ export interface CreateBookingParams {
   slotId: string;
   cropTypeId: string;
   declaredWeightKg: number;
+  vehicleNumber?: string;
+  vehicleType?: string;
   idempotencyKey?: string | null;
 }
 
@@ -24,7 +28,7 @@ export class BookingService {
     actorId: string,
     actorRole: string
   ): Promise<BookingRecord> {
-    const { farmerId, centreId, slotId, cropTypeId, declaredWeightKg, idempotencyKey } = params;
+    const { farmerId, centreId, slotId, cropTypeId, declaredWeightKg, vehicleNumber, vehicleType, idempotencyKey } = params;
 
     if (declaredWeightKg <= 0) {
       throw new ValidationError('Declared weight must be greater than zero.', 'INVALID_QUANTITY');
@@ -47,6 +51,10 @@ export class BookingService {
     if (actorRole === 'FARMER' && farmer.userId !== actorId) {
       throw new ForbiddenError('You can only book procurement slots for your own registered farmer profile.');
     }
+
+    // 2b. Enforce State Land Records (Bhulekh API) Anti-Hoarding Quota Cap
+    // Max Tonnage = Verified Acreage x State Yield Norm
+    await landRecordsService.enforceAntiHoardingQuota(farmerId, cropTypeId, declaredWeightKg);
 
     // 3. Validate Centre & Operational Status
     const centre = await centreDomainRepository.getCentreById(centreId);

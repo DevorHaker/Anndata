@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middleware/authenticate';
 import { authorizeRole } from '../middleware/authorize';
 import { bookingService } from '../services/booking.service';
+import { landRecordsService } from '../services/landRecords.service';
 import { z } from 'zod';
 import { ValidationError } from '../utils/errors';
 import { BookingStatus } from '../types/scheduling';
@@ -14,8 +15,35 @@ const createBookingSchema = z.object({
   slotId: z.string().min(1, 'slotId is required'),
   cropTypeId: z.string().min(1, 'cropTypeId is required'),
   declaredWeightKg: z.number().positive('declaredWeightKg must be greater than zero'),
+  vehicleNumber: z.string().optional(),
+  vehicleType: z.string().optional(),
   idempotencyKey: z.string().optional().nullable()
 });
+
+/**
+ * GET /api/v1/bookings/land-record-quota
+ * Verify Bhulekh Land Record and fetch Anti-Hoarding Quota Cap
+ */
+bookingsRouter.get(
+  '/land-record-quota',
+  authenticate,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const farmerId = (req.query.farmerId as string) || (req as any).user.sub;
+      const cropTypeId = (req.query.cropTypeId as string) || 'crop-paddy-a';
+
+      const landRecord = await landRecordsService.verifyFarmerLandRecords(farmerId, cropTypeId);
+
+      res.status(200).json({
+        success: true,
+        data: landRecord,
+        message: 'Bhulekh Land Records verified and Anti-Hoarding Quota Cap computed.'
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 /**
  * POST /api/v1/bookings
