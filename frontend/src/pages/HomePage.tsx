@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import {
   CheckCircle2,
   ArrowRight,
@@ -21,10 +21,24 @@ import {
   TrendingUp,
   MapPin
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../i18n/LanguageContext";
 
 export const HomePage: React.FC = () => {
+  const { user, isAuthenticated } = useAuth();
   const { t } = useLanguage();
+
+  // If user is already authenticated, redirect to their role-specific primary dashboard
+  if (isAuthenticated && user) {
+    const role = user.role === 'ADMIN' ? 'SYSTEM_ADMIN' : user.role;
+    if (role === 'CENTRE_MANAGER' || role === 'PROCUREMENT_OFFICER') {
+      return <Navigate to="/centre" replace />;
+    } else if (role === 'FARMER') {
+      return <Navigate to="/farmer/bookings" replace />;
+    } else if (role === 'SYSTEM_ADMIN' || role === 'DISTRICT_ADMIN') {
+      return <Navigate to="/intelligence/admin" replace />;
+    }
+  }
 
   // Interactive Ecosystem Hub State
   const [activeNode, setActiveNode] = useState<number>(0);
