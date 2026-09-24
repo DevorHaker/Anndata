@@ -20,6 +20,7 @@ import { intelligenceRouter } from './intelligence';
 import { notificationsRouter } from './notifications';
 import { syncRouter } from './sync';
 import { analyticsRouter } from './analytics';
+import { mandiTelemetryRouter } from './mandiTelemetry';
 import { createPlaceholderRouter } from './placeholders';
 
 export const v1Router = Router();
@@ -57,6 +58,9 @@ v1Router.use('/traceability', traceabilityRouter);
 
 // Phase 11 Real-Time Intelligence, Prediction & Decision Engine
 v1Router.use('/intelligence', intelligenceRouter);
+
+// Mandi Telemetry & Settlement Pipeline
+v1Router.use('/mandi-telemetry', mandiTelemetryRouter);
 
 // Phase 12 Reliable Farmer Communication, Offline Operations & Multilingual Access
 v1Router.use('/notifications', notificationsRouter);

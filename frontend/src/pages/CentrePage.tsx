@@ -17,6 +17,7 @@ import {
 import { StaffQueueDashboard } from '../components/queue/StaffQueueDashboard';
 import { ProcurementWorkflowStepper } from '../components/procurement/ProcurementWorkflowStepper';
 import { CentreManagerRequestsInbox } from '../components/centre/CentreManagerRequestsInbox';
+import { MandiTelemetryPipelineView } from '../components/telemetry/MandiTelemetryPipelineView';
 import {
   Building2,
   AlertOctagon,
@@ -35,7 +36,7 @@ import {
 
 export const CentrePage: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'requests' | 'overview' | 'capacity' | 'disruptions' | 'staff' | 'queue' | 'procurement'>('requests');
+  const [activeTab, setActiveTab] = useState<'requests' | 'overview' | 'capacity' | 'disruptions' | 'staff' | 'queue' | 'procurement' | 'telemetry'>('requests');
 
   // Centre list and selected centre state
   const [centres, setCentres] = useState<ProcurementCentreDetail[]>([]);
@@ -438,7 +439,22 @@ export const CentrePage: React.FC = () => {
         >
           <Scale className="w-4 h-4" /> Procurement & Weighbridge Operations
         </button>
+        <button
+          onClick={() => setActiveTab('telemetry')}
+          className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            activeTab === 'telemetry'
+              ? 'border-[#0d6e48] text-[#0d6e48]'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          <Activity className="w-4 h-4 text-emerald-700" /> Mandi Telemetry & Settlement Pipeline
+        </button>
       </div>
+
+      {/* TAB: Mandi Telemetry & Settlement Pipeline */}
+      {activeTab === 'telemetry' && (
+        <MandiTelemetryPipelineView />
+      )}
 
       {/* TAB: Incoming Farmer Procurement Requests */}
       {activeTab === 'requests' && selectedCentre && (
