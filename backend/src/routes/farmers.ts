@@ -102,6 +102,52 @@ router.post('/me/produce', validateRequest(addFarmerProduceSchema), async (req: 
 });
 
 /**
+ * PATCH /api/v1/farmers/me/produce/:id
+ * Updates an active produce declaration within the 5-minute window
+ */
+router.patch('/me/produce/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = (req as any).user;
+    const currentFarmer = await farmerDomainService.getMyProfile(user.sub);
+    const updated = await farmerDomainService.updateFarmerProduce(currentFarmer.id, req.params.id, req.body, {
+      userId: user.sub,
+      role: user.role,
+      farmerId: user.farmerId
+    });
+    return res.status(200).json({
+      success: true,
+      message: 'Farmer produce declaration updated successfully',
+      data: updated
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * POST /api/v1/farmers/me/produce/:id/confirm
+ * Confirms an active produce declaration after 5-minute edit window or via farmer confirmation
+ */
+router.post('/me/produce/:id/confirm', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = (req as any).user;
+    const currentFarmer = await farmerDomainService.getMyProfile(user.sub);
+    const confirmed = await farmerDomainService.confirmFarmerProduce(currentFarmer.id, req.params.id, {
+      userId: user.sub,
+      role: user.role,
+      farmerId: user.farmerId
+    });
+    return res.status(200).json({
+      success: true,
+      message: 'Farmer produce declaration confirmed successfully',
+      data: confirmed
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
  * GET /api/v1/farmers
  * Admin / Staff Farmer Search & Listing with Pagination
  */

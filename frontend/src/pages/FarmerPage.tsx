@@ -39,7 +39,8 @@ import {
   Sparkles,
   Zap,
   Award,
-  TrendingUp
+  TrendingUp,
+  Edit3
 } from 'lucide-react';
 
 export const FarmerPage: React.FC = () => {
@@ -94,6 +95,9 @@ export const FarmerPage: React.FC = () => {
 
   // Declare Produce Form State
   const [showProduceModal, setShowProduceModal] = useState(false);
+  const [editingProduceId, setEditingProduceId] = useState<string | null>(null);
+  const [nowTime, setNowTime] = useState<number>(Date.now());
+
   const [produceForm, setProduceForm] = useState({
     cropTypeId: '',
     centreId: '',
@@ -101,6 +105,26 @@ export const FarmerPage: React.FC = () => {
     estimatedYieldKg: 10000,
     declaredQuantityKg: 8000
   });
+
+  // 1-second interval timer for active declaration grace countdown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNowTime(Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Check for expired grace windows and auto-confirm
+  useEffect(() => {
+    produceList.forEach((p) => {
+      if (p.editableUntil && (p.status === 'PENDING_CONFIRMATION' || p.status === 'EDIT_WINDOW')) {
+        const expiresAt = new Date(p.editableUntil).getTime();
+        if (nowTime >= expiresAt) {
+          handleConfirmProduce(p.id, true);
+        }
+      }
+    });
+  }, [nowTime]);
 
   useEffect(() => {
     loadData();
@@ -199,46 +223,122 @@ export const FarmerPage: React.FC = () => {
     }
   };
 
-  const handleDeclareProduce = async (e: React.FormEvent) => {
+  const handleOpenProduceModalForEdit = (produceItem: FarmerProduceDetail) => {
+    setEditingProduceId(produceItem.id);
+    setProduceForm({
+      cropTypeId: produceItem.cropTypeId,
+      centreId: produceItem.centreId || '',
+      harvestSeason: produceItem.harvestSeason || 'RABI_2026',
+      estimatedYieldKg: produceItem.estimatedYieldKg || 10000,
+      declaredQuantityKg: produceItem.declaredQuantityKg || 8000
+    });
+    setShowProduceModal(true);
+  };
+
+  const handleConfirmProduce = async (produceId: string, isAuto: boolean = false) => {
+    try {
+      await farmerService.confirmMyProduce(produceId);
+      setProduceList((prev) =>
+        prev.map((item) => (item.id === produceId ? { ...item, status: 'DECLARED' } : item))
+      );
+      const storedBookings = bookingServiceUI.getStoredCreatedBookings();
+      if (storedBookings[0]) {
+        await bookingServiceUI.confirmBooking(storedBookings[0].id);
+      }
+      if (isAuto) {
+        setSuccessMsg('⏱️ 5-Minute Grace Window Expired: Active produce declaration & booking slot auto-confirmed!');
+      } else {
+        setSuccessMsg('✅ Active produce declaration & booking slot confirmed successfully by farmer!');
+      }
+    } catch (err: any) {
+      console.error('Error confirming produce declaration:', err);
+    }
+  };
+
+  const handleSaveProduceDeclaration = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
     try {
-      // 1. Register produce declaration record
-      const created = await farmerService.addMyProduce({
-        cropTypeId: produceForm.cropTypeId,
-        harvestSeason: produceForm.harvestSeason,
-        estimatedYieldKg: Number(produceForm.estimatedYieldKg),
-        declaredQuantityKg: Number(produceForm.declaredQuantityKg)
-      });
-      setProduceList((prev) => [created, ...prev]);
-
-      // 2. Submit procurement booking request for the selected Mandi
       const selectedCentre = centres.find((c) => c.id === produceForm.centreId);
       const selectedCrop = crops.find((c) => c.id === produceForm.cropTypeId);
 
       const targetCentreId = produceForm.centreId || (selectedCentre?.id || '33333333-3333-4000-8000-333333333333');
       const targetCentreName = selectedCentre?.name || 'APMC Karnal Central Procurement Hub';
 
-      const bookingReq = await bookingServiceUI.createBooking({
-        farmerId: farmer?.id || user?.id,
-        farmerName: farmer && farmer.firstName ? `${farmer.firstName} ${farmer.lastName}` : (user && user.firstName ? `${user.firstName} ${user.lastName}` : 'Ramesh Kumar'),
-        farmerMobile: user?.mobileNumber || '+91 9999900002',
-        farmerReferenceId: farmer?.farmerReferenceId || user?.farmerReferenceId || 'FRM-2026-8812',
-        centreId: targetCentreId,
-        centreName: targetCentreName,
-        cropTypeId: produceForm.cropTypeId,
-        cropName: selectedCrop?.name || 'Paddy (Grade A)',
-        declaredWeightKg: Number(produceForm.declaredQuantityKg),
-        harvestSeason: produceForm.harvestSeason
-      });
+      if (editingProduceId) {
+        // Edit active declaration during 5-minute window
+        const updated = await farmerService.updateMyProduce(editingProduceId, {
+          cropTypeId: produceForm.cropTypeId,
+          harvestSeason: produceForm.harvestSeason,
+          estimatedYieldKg: Number(produceForm.estimatedYieldKg),
+          declaredQuantityKg: Number(produceForm.declaredQuantityKg),
+          centreId: targetCentreId
+        });
 
-      setShowProduceModal(false);
-      setSuccessMsg(
-        `Produce declared! Procurement slot request '${bookingReq.bookingReferenceId}' sent to Centre Manager at ${targetCentreName}.`
-      );
+        setProduceList((prev) =>
+          prev.map((item) =>
+            item.id === editingProduceId
+              ? { ...item, ...updated, centreId: targetCentreId }
+              : item
+          )
+        );
+
+        const storedBookings = bookingServiceUI.getStoredCreatedBookings();
+        if (storedBookings[0]) {
+          await bookingServiceUI.updateBooking(storedBookings[0].id, {
+            centreId: targetCentreId,
+            centreName: targetCentreName,
+            cropTypeId: produceForm.cropTypeId,
+            cropName: selectedCrop?.name || 'Declared Harvest Produce',
+            declaredWeightKg: Number(produceForm.declaredQuantityKg)
+          });
+        }
+
+        setShowProduceModal(false);
+        setEditingProduceId(null);
+        setSuccessMsg('Active produce declaration updated successfully within the 5-minute window!');
+      } else {
+        // Register new produce declaration record with 5-minute window
+        const now = new Date();
+        const editableUntil = new Date(now.getTime() + 5 * 60 * 1000).toISOString();
+
+        const created = await farmerService.addMyProduce({
+          cropTypeId: produceForm.cropTypeId,
+          harvestSeason: produceForm.harvestSeason,
+          estimatedYieldKg: Number(produceForm.estimatedYieldKg),
+          declaredQuantityKg: Number(produceForm.declaredQuantityKg),
+          centreId: targetCentreId
+        });
+
+        const createdWithWindow: FarmerProduceDetail = {
+          ...created,
+          editableUntil,
+          centreId: targetCentreId,
+          status: 'PENDING_CONFIRMATION'
+        };
+        setProduceList((prev) => [createdWithWindow, ...prev]);
+
+        const bookingReq = await bookingServiceUI.createBooking({
+          farmerId: farmer?.id || user?.id,
+          farmerName: farmer && farmer.firstName ? `${farmer.firstName} ${farmer.lastName}` : (user && user.firstName ? `${user.firstName} ${user.lastName}` : 'Ramesh Kumar'),
+          farmerMobile: user?.mobileNumber || '+91 9999900002',
+          farmerReferenceId: farmer?.farmerReferenceId || user?.farmerReferenceId || 'FRM-2026-8812',
+          centreId: targetCentreId,
+          centreName: targetCentreName,
+          cropTypeId: produceForm.cropTypeId,
+          cropName: selectedCrop?.name || 'Paddy (Grade A)',
+          declaredWeightKg: Number(produceForm.declaredQuantityKg),
+          harvestSeason: produceForm.harvestSeason
+        });
+
+        setShowProduceModal(false);
+        setSuccessMsg(
+          `Produce declared! You have 5 minutes to edit your declaration before confirmation. Request '${bookingReq.bookingReferenceId}' sent.`
+        );
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to submit produce declaration.');
+      setError(err.message || 'Failed to save produce declaration.');
     } finally {
       setSaving(false);
     }
@@ -495,17 +595,82 @@ export const FarmerPage: React.FC = () => {
 
       {/* TAB 2: Produce Declarations */}
       {activeTab === 'produce' && (
-        <div className="space-y-4">
+        <div className="space-y-4 font-sans">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2">
               <Wheat className="w-5 h-5 text-[#0d6e48]" /> Declared Harvest & Produce Records
             </h2>
-            <Button onClick={() => setShowProduceModal(true)}>
+            <Button
+              onClick={() => {
+                setEditingProduceId(null);
+                setShowProduceModal(true);
+              }}
+            >
               <PlusCircle className="w-4 h-4 mr-1.5 inline" /> Declare New Harvest
             </Button>
           </div>
 
-          {/* Declare Produce & Mandi Selection Modal */}
+          {/* Active 5-Minute Edit Grace Window Banner */}
+          {(() => {
+            const activeEditableProduce = produceList.find(
+              (p) =>
+                p.editableUntil &&
+                (p.status === 'PENDING_CONFIRMATION' || p.status === 'EDIT_WINDOW') &&
+                new Date(p.editableUntil).getTime() > nowTime
+            );
+
+            if (!activeEditableProduce) return null;
+
+            const secondsLeft = Math.max(
+              0,
+              Math.floor((new Date(activeEditableProduce.editableUntil!).getTime() - nowTime) / 1000)
+            );
+            const minutes = Math.floor(secondsLeft / 60);
+            const seconds = secondsLeft % 60;
+            const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            return (
+              <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-amber-500/15 to-emerald-500/10 border-2 border-amber-400/80 shadow-xl space-y-3 relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1 bg-amber-500 text-slate-950 font-bold text-xs font-mono rounded-full flex items-center gap-1.5 shadow-sm">
+                        <Clock className="w-3.5 h-3.5 animate-spin" /> 5-MINUTE EDIT WINDOW ACTIVE
+                      </span>
+                      <span className="text-xs font-mono font-bold text-amber-800 bg-amber-100 px-3 py-0.5 rounded-full border border-amber-300">
+                        Remaining: {formattedTime}
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold font-serif-header text-slate-900 flex items-center gap-2 pt-1">
+                      <Wheat className="w-5 h-5 text-[#0d6e48]" /> Active Declaration:{' '}
+                      {crops.find((c) => c.id === activeEditableProduce.cropTypeId)?.name || 'Harvest Crop'} (
+                      {activeEditableProduce.declaredQuantityKg.toLocaleString()} KG)
+                    </h3>
+                    <p className="text-xs text-slate-600 font-medium">
+                      You have a 5-minute grace period to edit crop details or target Mandi before automatic confirmation.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button
+                      onClick={() => handleOpenProduceModalForEdit(activeEditableProduce)}
+                      className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-md"
+                    >
+                      <Edit3 className="w-3.5 h-3.5 mr-1 inline" /> Edit Active Declaration
+                    </Button>
+                    <Button
+                      onClick={() => handleConfirmProduce(activeEditableProduce.id, false)}
+                      className="bg-[#0d6e48] hover:bg-[#095235] text-white font-bold text-xs shadow-md"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1 inline" /> Confirm Now
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Declare / Edit Produce & Mandi Selection Modal */}
           {showProduceModal && (() => {
             const selectedCropName = crops.find((c) => c.id === produceForm.cropTypeId)?.name;
             const aiRecs = getAiMandiRecommendations(centres, selectedCropName);
@@ -518,10 +683,13 @@ export const FarmerPage: React.FC = () => {
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                       <h3 className="text-lg font-bold font-serif-header text-slate-900 flex items-center gap-2">
-                        <Wheat className="w-5 h-5 text-[#0d6e48]" /> Declare Produce & Select Mandi
+                        <Wheat className="w-5 h-5 text-[#0d6e48]" />{' '}
+                        {editingProduceId ? 'Edit Active Declaration (5-Min Window)' : 'Declare Produce & Select Mandi'}
                       </h3>
                       <p className="text-xs text-slate-500 font-medium">
-                        Register harvest yield and route your procurement request to the optimal Mandi.
+                        {editingProduceId
+                          ? 'Modify your crop declaration or target Mandi during the active 5-minute grace period.'
+                          : 'Register harvest yield and route your procurement request to the optimal Mandi.'}
                       </p>
                     </div>
                     <span className="px-2.5 py-1 bg-emerald-50 text-[#0d6e48] border border-[#b2e8cf] text-[10px] font-mono font-bold rounded-full flex items-center gap-1">
@@ -572,7 +740,7 @@ export const FarmerPage: React.FC = () => {
                     </div>
                   )}
 
-                  <form onSubmit={handleDeclareProduce} className="space-y-4">
+                  <form onSubmit={handleSaveProduceDeclaration} className="space-y-4">
                     <div>
                       <Select
                         label="Target Mandi / Procurement Centre (AI Sorted)"
@@ -647,11 +815,19 @@ export const FarmerPage: React.FC = () => {
                     </div>
 
                     <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
-                      <Button variant="outline" type="button" onClick={() => setShowProduceModal(false)}>
+                      <Button
+                        variant="outline"
+                        type="button"
+                        onClick={() => {
+                          setShowProduceModal(false);
+                          setEditingProduceId(null);
+                        }}
+                      >
                         Cancel
                       </Button>
                       <Button type="submit" isLoading={saving} className="bg-[#0d6e48] hover:bg-[#095235]">
-                        <Sparkles className="w-4 h-4 mr-1.5 text-amber-300 inline" /> Confirm & Send to Mandi Manager
+                        <Sparkles className="w-4 h-4 mr-1.5 text-amber-300 inline" />{' '}
+                        {editingProduceId ? 'Save & Update Declaration' : 'Confirm & Send to Mandi Manager'}
                       </Button>
                     </div>
                   </form>
@@ -661,39 +837,79 @@ export const FarmerPage: React.FC = () => {
           })()}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {produceList.map((item) => (
-              <Card key={item.id}>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900 font-serif-header flex items-center gap-2 text-base">
-                      <Wheat className="w-4 h-4 text-[#0d6e48]" />
-                      {crops.find((c) => c.id === item.cropTypeId)?.name || 'Harvest Produce'}
-                    </span>
-                    <Badge variant="info">{item.harvestSeason}</Badge>
-                  </div>
+            {produceList.map((item) => {
+              const isEditable =
+                item.editableUntil &&
+                (item.status === 'PENDING_CONFIRMATION' || item.status === 'EDIT_WINDOW') &&
+                new Date(item.editableUntil).getTime() > nowTime;
 
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                      <span className="text-slate-500 font-medium block">Declared Quantity</span>
-                      <span className="text-[#0d6e48] font-bold text-sm">
-                        {item.declaredQuantityKg.toLocaleString()} KG
-                      </span>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                      <span className="text-slate-500 font-medium block">Procured Quantity</span>
-                      <span className="text-slate-900 font-bold text-sm">
-                        {item.procuredQuantityKg.toLocaleString()} KG
-                      </span>
-                    </div>
-                  </div>
+              const secRemaining = isEditable
+                ? Math.max(0, Math.floor((new Date(item.editableUntil!).getTime() - nowTime) / 1000))
+                : 0;
+              const mins = Math.floor(secRemaining / 60);
+              const secs = secRemaining % 60;
+              const cardCountdown = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
-                  <div className="flex justify-between items-center text-xs text-slate-500 pt-1 font-medium">
-                    <span>Status: <strong className="text-slate-900">{item.status}</strong></span>
-                    <span>Declared: {new Date(item.createdAt).toLocaleDateString()}</span>
+              return (
+                <Card key={item.id} className={isEditable ? 'border-2 border-amber-400 bg-amber-50/20' : ''}>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900 font-serif-header flex items-center gap-2 text-base">
+                        <Wheat className="w-4 h-4 text-[#0d6e48]" />
+                        {crops.find((c) => c.id === item.cropTypeId)?.name || 'Harvest Produce'}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {isEditable && (
+                          <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-mono font-bold rounded-full flex items-center gap-1 animate-pulse">
+                            <Clock className="w-3 h-3" /> Grace Window: {cardCountdown}
+                          </span>
+                        )}
+                        <Badge variant={isEditable ? 'warning' : 'info'}>
+                          {isEditable ? 'PENDING CONFIRMATION' : item.harvestSeason}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <span className="text-slate-500 font-medium block">Declared Quantity</span>
+                        <span className="text-[#0d6e48] font-bold text-sm">
+                          {item.declaredQuantityKg.toLocaleString()} KG
+                        </span>
+                      </div>
+                      <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <span className="text-slate-500 font-medium block">Procured Quantity</span>
+                        <span className="text-slate-900 font-bold text-sm">
+                          {item.procuredQuantityKg.toLocaleString()} KG
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center text-xs text-slate-500 pt-1 font-medium border-t border-slate-100">
+                      <span>Status: <strong className="text-slate-900">{isEditable ? 'EDITABLE (5-Min Grace)' : item.status}</strong></span>
+                      <span>Declared: {new Date(item.createdAt).toLocaleDateString()}</span>
+                    </div>
+
+                    {isEditable && (
+                      <div className="flex items-center gap-2 pt-1 border-t border-amber-200/60">
+                        <Button
+                          onClick={() => handleOpenProduceModalForEdit(item)}
+                          className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold py-1.5"
+                        >
+                          <Edit3 className="w-3.5 h-3.5 mr-1 inline" /> Edit (5m Window)
+                        </Button>
+                        <Button
+                          onClick={() => handleConfirmProduce(item.id, false)}
+                          className="w-full bg-[#0d6e48] hover:bg-[#095235] text-white text-xs font-bold py-1.5"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5 mr-1 inline" /> Confirm Now
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
 
             {produceList.length === 0 && (
               <div className="col-span-2 bg-white p-8 rounded-3xl text-center border border-slate-200 text-slate-500 shadow-sm font-medium">

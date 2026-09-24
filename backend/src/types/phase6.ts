@@ -61,7 +61,8 @@ export interface FarmerProduceDetail {
   estimatedYieldKg: number;
   declaredQuantityKg: number;
   procuredQuantityKg: number;
-  status: 'DECLARED' | 'VERIFIED' | 'PROCURED' | 'CANCELLED';
+  status: 'PENDING_CONFIRMATION' | 'EDIT_WINDOW' | 'DECLARED' | 'VERIFIED' | 'PROCURED' | 'CANCELLED';
+  editableUntil?: Date | string | null;
   createdAt: Date;
   updatedAt?: Date;
 }

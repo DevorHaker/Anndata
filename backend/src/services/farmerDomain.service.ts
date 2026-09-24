@@ -160,6 +160,29 @@ export class FarmerDomainService {
     return produce;
   }
 
+  async updateFarmerProduce(
+    farmerId: string,
+    produceId: string,
+    data: { cropTypeId?: string; harvestSeason?: string; estimatedYieldKg?: number; declaredQuantityKg?: number },
+    requestingUser: { userId: string; role: string; farmerId?: string | null }
+  ) {
+    if (requestingUser.role === 'FARMER' && requestingUser.farmerId && requestingUser.farmerId !== farmerId) {
+      throw new ForbiddenError('Farmers can only update produce declarations for their own account', 'FORBIDDEN_SCOPE');
+    }
+    return farmerDomainRepository.updateProduce(produceId, data);
+  }
+
+  async confirmFarmerProduce(
+    farmerId: string,
+    produceId: string,
+    requestingUser: { userId: string; role: string; farmerId?: string | null }
+  ) {
+    if (requestingUser.role === 'FARMER' && requestingUser.farmerId && requestingUser.farmerId !== farmerId) {
+      throw new ForbiddenError('Farmers can only confirm produce declarations for their own account', 'FORBIDDEN_SCOPE');
+    }
+    return farmerDomainRepository.confirmProduce(produceId);
+  }
+
   async listFarmerProduce(farmerId: string, requestingUser: { userId: string; role: string; farmerId?: string | null }) {
     if (requestingUser.role === 'FARMER' && requestingUser.farmerId && requestingUser.farmerId !== farmerId) {
       throw new ForbiddenError('Farmers can only view produce declarations for their own account', 'FORBIDDEN_SCOPE');

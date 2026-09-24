@@ -462,6 +462,8 @@ export class FarmerDomainRepository {
     dbClient: PoolClient | typeof pool = pool
   ): Promise<FarmerProduceDetail> {
     const id = uuidv4();
+    const now = new Date();
+    const editableUntil = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes edit grace window
     const produce: FarmerProduceDetail = {
       id,
       farmerId,
@@ -471,8 +473,9 @@ export class FarmerDomainRepository {
       estimatedYieldKg: data.estimatedYieldKg,
       declaredQuantityKg: data.declaredQuantityKg,
       procuredQuantityKg: 0,
-      status: 'DECLARED',
-      createdAt: new Date()
+      status: 'PENDING_CONFIRMATION',
+      editableUntil,
+      createdAt: now
     };
 
     memoryProduces.set(id, produce);
@@ -481,7 +484,7 @@ export class FarmerDomainRepository {
       const query = `
         INSERT INTO farmer_produce (
           id, farmer_id, crop_type_id, crop_variety_id, harvest_season, estimated_yield_kg, declared_quantity_kg, status
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'DECLARED')
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'PENDING_CONFIRMATION')
         RETURNING id
       `;
       await dbClient.query(query, [
@@ -498,6 +501,78 @@ export class FarmerDomainRepository {
     }
 
     return produce;
+  }
+
+  async updateProduce(
+    produceId: string,
+    data: {
+      cropTypeId?: string;
+      harvestSeason?: string;
+      estimatedYieldKg?: number;
+      declaredQuantityKg?: number;
+    },
+    dbClient: PoolClient | typeof pool = pool
+  ): Promise<FarmerProduceDetail> {
+    const existing = memoryProduces.get(produceId);
+    if (existing) {
+      if (data.cropTypeId) existing.cropTypeId = data.cropTypeId;
+      if (data.harvestSeason) existing.harvestSeason = data.harvestSeason;
+      if (data.estimatedYieldKg !== undefined) existing.estimatedYieldKg = data.estimatedYieldKg;
+      if (data.declaredQuantityKg !== undefined) existing.declaredQuantityKg = data.declaredQuantityKg;
+      existing.updatedAt = new Date();
+      memoryProduces.set(produceId, existing);
+      return existing;
+    }
+
+    try {
+      const query = `
+        UPDATE farmer_produce
+        SET
+          crop_type_id = COALESCE($1, crop_type_id),
+          harvest_season = COALESCE($2, harvest_season),
+          estimated_yield_kg = COALESCE($3, estimated_yield_kg),
+          declared_quantity_kg = COALESCE($4, declared_quantity_kg),
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $5
+      `;
+      await dbClient.query(query, [
+        data.cropTypeId || null,
+        data.harvestSeason || null,
+        data.estimatedYieldKg || null,
+        data.declaredQuantityKg || null,
+        produceId
+      ]);
+    } catch (err) {
+      // Memory fallback
+    }
+
+    const items = Array.from(memoryProduces.values());
+    const found = items.find((p) => p.id === produceId);
+    if (found) return found;
+
+    throw new Error(`Produce declaration ${produceId} not found`);
+  }
+
+  async confirmProduce(produceId: string, dbClient: PoolClient | typeof pool = pool): Promise<FarmerProduceDetail> {
+    const existing = memoryProduces.get(produceId);
+    if (existing) {
+      existing.status = 'DECLARED';
+      existing.updatedAt = new Date();
+      memoryProduces.set(produceId, existing);
+      return existing;
+    }
+
+    try {
+      await dbClient.query("UPDATE farmer_produce SET status = 'DECLARED', updated_at = CURRENT_TIMESTAMP WHERE id = $1", [produceId]);
+    } catch (err) {
+      // Memory fallback
+    }
+
+    const items = Array.from(memoryProduces.values());
+    const found = items.find((p) => p.id === produceId);
+    if (found) return found;
+
+    throw new Error(`Produce declaration ${produceId} not found`);
   }
 
   async listFarmerProduce(farmerId: string, dbClient: PoolClient | typeof pool = pool): Promise<FarmerProduceDetail[]> {

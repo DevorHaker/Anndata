@@ -18,7 +18,8 @@ export interface BookingRecordUI {
   scheduledDate: string;
   startTime: string;
   endTime: string;
-  status: 'CONFIRMED' | 'PENDING_VERIFICATION' | 'CHECKED_IN' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED';
+  status: 'PENDING_CONFIRMATION' | 'CONFIRMED' | 'PENDING_VERIFICATION' | 'CHECKED_IN' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED';
+  editableUntil?: string;
   cancellationReason?: string | null;
   createdAt: string;
 }
@@ -69,6 +70,8 @@ class BookingServiceUI {
     declaredWeightKg: number;
     harvestSeason?: string;
   }): Promise<BookingRecordUI> {
+    const now = new Date();
+    const editableUntil = new Date(now.getTime() + 5 * 60 * 1000).toISOString();
     const newBooking: BookingRecordUI = {
       id: `bk-farmer-${Date.now()}`,
       bookingReferenceId: `BK-20260920-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
@@ -86,8 +89,9 @@ class BookingServiceUI {
       scheduledDate: new Date().toISOString().split('T')[0],
       startTime: '09:00 AM',
       endTime: '11:00 AM',
-      status: 'PENDING_VERIFICATION',
-      createdAt: new Date().toISOString()
+      status: 'PENDING_CONFIRMATION',
+      editableUntil,
+      createdAt: now.toISOString()
     };
 
     // Dispatch notification to Centre Manager inbox
@@ -116,7 +120,8 @@ class BookingServiceUI {
           ...data.data,
           centreName: payload.centreName || data.data.centreName,
           farmerName: payload.farmerName || data.data.farmerName,
-          cropName: payload.cropName || data.data.cropName
+          cropName: payload.cropName || data.data.cropName,
+          editableUntil
         };
         this.saveCreatedBookingLocally(mergedApiBooking);
         return mergedApiBooking;
@@ -127,6 +132,41 @@ class BookingServiceUI {
 
     this.saveCreatedBookingLocally(newBooking);
     return newBooking;
+  }
+
+  async updateBooking(
+    bookingId: string,
+    updates: {
+      centreId?: string;
+      centreName?: string;
+      cropTypeId?: string;
+      cropName?: string;
+      declaredWeightKg?: number;
+    }
+  ): Promise<BookingRecordUI | null> {
+    const local = this.getStoredCreatedBookings();
+    const target = local.find((b) => b.id === bookingId);
+    if (target) {
+      if (updates.centreId) target.centreId = updates.centreId;
+      if (updates.centreName) target.centreName = updates.centreName;
+      if (updates.cropTypeId) target.cropTypeId = updates.cropTypeId;
+      if (updates.cropName) target.cropName = updates.cropName;
+      if (updates.declaredWeightKg !== undefined) target.declaredWeightKg = updates.declaredWeightKg;
+      this.saveCreatedBookingLocally(target);
+      return target;
+    }
+    return null;
+  }
+
+  async confirmBooking(bookingId: string): Promise<BookingRecordUI | null> {
+    const local = this.getStoredCreatedBookings();
+    const target = local.find((b) => b.id === bookingId);
+    if (target) {
+      target.status = 'PENDING_VERIFICATION';
+      this.saveCreatedBookingLocally(target);
+      return target;
+    }
+    return null;
   }
 
   async listCentreBookings(centreId: string, status?: string): Promise<BookingRecordUI[]> {
