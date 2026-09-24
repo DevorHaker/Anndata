@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   User,
@@ -16,10 +16,37 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getUserDisplayInfo } from '../utils/userDisplay';
+import { notificationServiceUI } from '../services/notificationService';
 
 export const Sidebar: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const displayInfo = user ? getUserDisplayInfo(user) : null;
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCount = async () => {
+      if (!user) return;
+      try {
+        const count = await notificationServiceUI.getUnreadCount(user.role, user.id);
+        if (isMounted) {
+          setUnreadCount(count);
+        }
+      } catch (err) {
+        // Fallback
+      }
+    };
+
+    fetchCount();
+    const unsub = notificationServiceUI.subscribe(fetchCount);
+    const timer = setInterval(fetchCount, 5000);
+
+    return () => {
+      isMounted = false;
+      unsub();
+      clearInterval(timer);
+    };
+  }, [user]);
 
   const getRoleNavItems = () => {
     const items: { to: string; label: string; icon: any; exact?: boolean }[] = [];
@@ -79,6 +106,7 @@ export const Sidebar: React.FC = () => {
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
+              const isNotif = item.to === '/notifications';
               return (
                 <NavLink
                   key={item.to}
@@ -92,8 +120,21 @@ export const Sidebar: React.FC = () => {
                     }`
                   }
                 >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
+                  <div className="relative flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4" />
+                    {isNotif && unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600"></span>
+                      </span>
+                    )}
+                  </div>
+                  <span>{item.label}</span>
+                  {isNotif && unreadCount > 0 && (
+                    <span className="ml-auto px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-600 text-white shadow-sm animate-pulse">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
                 </NavLink>
               );
             })}

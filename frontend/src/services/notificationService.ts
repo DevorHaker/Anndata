@@ -38,6 +38,23 @@ const getDefaultNotifications = (): NotificationItem[] => [
 ];
 
 export class NotificationServiceUI {
+  private listeners = new Set<() => void>();
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  notifyListeners(): void {
+    this.listeners.forEach((listener) => {
+      try {
+        listener();
+      } catch (err) {
+        console.error('Error in notification listener', err);
+      }
+    });
+  }
+
   private getLocalStore(): NotificationItem[] {
     try {
       const data = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -112,6 +129,11 @@ export class NotificationServiceUI {
     return allItems.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
+  async getUnreadCount(userRole?: string, userId?: string): Promise<number> {
+    const list = await this.getNotifications(userRole, userId);
+    return list.filter((n) => !n.readAt).length;
+  }
+
   addNotification(newNotif: {
     userId?: string;
     roleTarget?: 'FARMER' | 'CENTRE_MANAGER' | 'ALL';
@@ -134,6 +156,7 @@ export class NotificationServiceUI {
     const store = this.getLocalStore();
     store.unshift(item);
     this.saveLocalStore(store);
+    this.notifyListeners();
     return item;
   }
 
@@ -147,6 +170,7 @@ export class NotificationServiceUI {
     const store = this.getLocalStore();
     const updated = store.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n));
     this.saveLocalStore(updated);
+    this.notifyListeners();
   }
 
   async markAllAsRead(): Promise<void> {
@@ -159,7 +183,9 @@ export class NotificationServiceUI {
     const store = this.getLocalStore();
     const updated = store.map((n) => ({ ...n, readAt: new Date().toISOString() }));
     this.saveLocalStore(updated);
+    this.notifyListeners();
   }
 }
 
 export const notificationServiceUI = new NotificationServiceUI();
+

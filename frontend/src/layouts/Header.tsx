@@ -1,14 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, Globe } from 'lucide-react';
+import { LogOut, Globe, Bell } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LANGUAGES } from '../i18n/translations';
 import { getUserDisplayInfo } from '../utils/userDisplay';
+import { notificationServiceUI } from '../services/notificationService';
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { language, openLanguageModal } = useLanguage();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCount = async () => {
+      if (!user) return;
+      try {
+        const count = await notificationServiceUI.getUnreadCount(user.role, user.id);
+        if (isMounted) setUnreadCount(count);
+      } catch (err) {}
+    };
+
+    fetchCount();
+    const unsub = notificationServiceUI.subscribe(fetchCount);
+    const timer = setInterval(fetchCount, 5000);
+
+    return () => {
+      isMounted = false;
+      unsub();
+      clearInterval(timer);
+    };
+  }, [user]);
 
   const activeLangObj = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
 
@@ -56,6 +79,21 @@ export const Header: React.FC = () => {
           const displayInfo = getUserDisplayInfo(user);
           return (
             <div className="flex items-center gap-3 border-l border-slate-200 pl-3">
+              {/* Header Notifications Icon with Red Dot Indicator */}
+              <Link
+                to="/notifications"
+                className="relative p-2 bg-slate-50 hover:bg-[#e6f7ef] text-slate-700 hover:text-[#0d6e48] rounded-xl border border-slate-200 hover:border-[#b2e8cf] transition-all"
+                title="Notifications Inbox"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600 border-2 border-white"></span>
+                  </span>
+                )}
+              </Link>
+
               <Link
                 to="/profile"
                 className="flex items-center gap-2 py-1 px-3 bg-emerald-50 hover:bg-emerald-100/80 rounded-xl border border-emerald-200 transition-colors"
